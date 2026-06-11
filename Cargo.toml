@@ -7,7 +7,7 @@ description = "UMBRA - AI Agent System for MT4 Automated Trading"
 license = "MIT"
 
 [features]
-default = ["desktop"]
+default = ["desktop", "server"]
 desktop = []
 server = []
 

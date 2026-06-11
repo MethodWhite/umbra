@@ -11,6 +11,8 @@ pub mod rate_limiter;
 pub mod job_queue;
 pub mod security;
 pub mod ai_client;
+pub mod domain;
+pub mod application;
 
 // Server-only: CLI API server
 #[cfg(feature = "server")]
@@ -41,10 +43,6 @@ pub mod debugger;
 pub mod frontend;
 #[cfg(feature = "server")]
 pub mod cache;
-#[cfg(feature = "server")]
-pub mod domain;
-#[cfg(feature = "server")]
-pub mod application;
 
 #[cfg(feature = "server")]
 pub use config::UmbraConfig;
