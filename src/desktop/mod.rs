@@ -1,10 +1,12 @@
 #![allow(deprecated)]
 use eframe::egui::{self, Color32, Vec2, RichText, Button, Stroke, Pos2, Align2, FontId, Rect, Rounding, TextEdit, scroll_area::ScrollBarVisibility};
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use std::collections::HashMap;
 use crate::sphere::SphereRenderer;
 use crate::agent_memory::{AgentMemory, CognitiveBehavior, EmotionalState};
 use crate::agent_personality::*;
+use crate::infrastructure::http::ollama_client::{OllamaClient, ChatMessage};
 
 const HOVER_PURPLE: Color32 = Color32::from_rgba_premultiplied(167, 139, 250, 40);
 
@@ -75,6 +77,8 @@ pub struct App {
     broker_server: String,
     ai_strategy: String,
     needs_repaint: bool,
+    ollama: Option<OllamaClient>,
+    inference_result: Arc<Mutex<Option<(usize, String)>>>,
 }
 
 const TRADING_FILTERS: &[&str] = &["All", "Forex", "Crypto", "Commodities", "Indices"];
@@ -166,6 +170,8 @@ impl Default for App {
             broker_server: "demo.pepperstone.com".into(),
             ai_strategy: "144K Method".into(),
             needs_repaint: false,
+            ollama: None,
+            inference_result: Arc::new(Mutex::new(None)),
         };
         app.detect_local_models();
         app
@@ -200,19 +206,54 @@ impl eframe::App for App {
 
         self.handle_shortcuts(ctx);
 
+        // Check for completed inference
+        if let Ok(mut result) = self.inference_result.lock() {
+            if let Some((conv_id, response)) = result.take() {
+                if conv_id < self.conversations.len() {
+                    self.conversations[conv_id].messages.push(Message {
+                        sender: "umbra".into(),
+                        text: response,
+                        is_user: false,
+                    });
+                    self.current_emotion = EmotionalState::analytical();
+                }
+                self.needs_repaint = true;
+            }
+        }
+
         if let Some(started) = self.conv_thinking {
             if started.elapsed() > std::time::Duration::from_millis(1200) {
                 self.conv_thinking = None;
                 self.needs_repaint = true;
                 if let Some(idx) = self.selected_conv {
                     if idx < self.conversations.len() {
-                        let response = self.generate_ai_response();
-                        self.conversations[idx].messages.push(Message {
-                            sender: "umbra".into(),
-                            text: response,
-                            is_user: false,
-                        });
-                        self.current_emotion = EmotionalState::analytical();
+                        let last_msg = self.conversations[idx].messages.last()
+                            .map(|m| m.text.clone())
+                            .unwrap_or_default();
+                        if self.ollama.is_some() {
+                            let result_arc = self.inference_result.clone();
+                            let conv_id = idx;
+                            let msgs = vec![
+                                ChatMessage { role: "system".into(), content: "You are Umbra, an advanced AI assistant. Be concise and helpful.".into() },
+                                ChatMessage { role: "user".into(), content: last_msg.clone() },
+                            ];
+                            tokio::spawn(async move {
+                                let client = OllamaClient::new();
+                                if let Ok(response) = client.chat_completion("llama3.2", msgs).await {
+                                    if let Ok(mut guard) = result_arc.lock() {
+                                        *guard = Some((conv_id, response));
+                                    }
+                                }
+                            });
+                        } else {
+                            let response = self.generate_ai_response();
+                            self.conversations[idx].messages.push(Message {
+                                sender: "umbra".into(),
+                                text: response,
+                                is_user: false,
+                            });
+                            self.current_emotion = EmotionalState::analytical();
+                        }
                     }
                 }
             }
@@ -319,6 +360,7 @@ impl App {
                 if let Some(ollama) = self.providers.iter_mut().find(|p| p.name == "Ollama") {
                     ollama.configured = true;
                 }
+                self.ollama = Some(OllamaClient::new());
             }
         }
         if let Ok(resp) = reqwest::blocking::get("http://localhost:8080/v1/models") {

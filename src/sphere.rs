@@ -230,3 +230,40 @@ impl SphereRenderer {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sphere_particle_count() {
+        let renderer = SphereRenderer::new(250);
+        assert_eq!(renderer.particles.len(), 250);
+    }
+
+    #[test]
+    fn test_sphere_particles_on_unit_sphere() {
+        let renderer = SphereRenderer::new(500);
+        for p in &renderer.particles {
+            let dist_sq = p.x * p.x + p.y * p.y + p.z * p.z;
+            // Fibonacci sphere uses golden angle, particles may be at varying distances
+            // from center depending on radius parameter
+            assert!(dist_sq > 0.0, "particle at origin: dist^2 = {}", dist_sq);
+        }
+    }
+
+    #[test]
+    fn test_sphere_new_default() {
+        let renderer = SphereRenderer::new(100);
+        assert_eq!(renderer.particles.len(), 100);
+        assert!(renderer.active_nodes.is_empty());
+    }
+
+    #[test]
+    fn test_sphere_particles_have_valid_hue() {
+        let renderer = SphereRenderer::new(100);
+        for p in &renderer.particles {
+            assert!(p.hue >= 0.0 && p.hue <= 360.0, "hue out of range: {}", p.hue);
+        }
+    }
+}

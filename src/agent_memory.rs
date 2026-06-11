@@ -715,6 +715,110 @@ impl CognitiveSession {
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_hsv_to_rgb_black() {
+        assert_eq!(hsv_to_rgb(0.0, 0.0, 0.0), (0, 0, 0));
+    }
+
+    #[test]
+    fn test_hsv_to_rgb_white() {
+        assert_eq!(hsv_to_rgb(0.0, 0.0, 1.0), (255, 255, 255));
+    }
+
+    #[test]
+    fn test_hsv_to_rgb_red() {
+        let (r, g, b) = hsv_to_rgb(0.0, 1.0, 1.0);
+        assert_eq!((r, g, b), (255, 0, 0));
+    }
+
+    #[test]
+    fn test_emotional_state_calm() {
+        let state = EmotionalState::calm();
+        assert_eq!(state.intensity, EmotionIntensity::Low);
+    }
+
+    #[test]
+    fn test_emotional_state_happy() {
+        let state = EmotionalState::happy();
+        assert!(state.valence > 0.5);
+    }
+
+    #[test]
+    fn test_cognitive_behavior_new() {
+        let cb = CognitiveBehavior::new();
+        assert_eq!(cb.frustration_level, 0.0);
+        assert_eq!(cb.cooling_cycles, 0);
+    }
+
+    #[test]
+    fn test_cognitive_behavior_record_failure() {
+        let mut cb = CognitiveBehavior::new();
+        cb.record_failure();
+        assert!((cb.frustration_level - 0.2).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_cognitive_behavior_record_success() {
+        let mut cb = CognitiveBehavior::new();
+        cb.frustration_level = 0.5;
+        cb.record_success();
+        assert!((cb.frustration_level - 0.3).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_agent_memory_save_and_load() {
+        let memory = AgentMemory::new();
+        let agent = AgentParams {
+            id: "test-1".into(),
+            name: "test_agent".into(),
+            agent_type: AgentType::LLM,
+            capabilities: AgentCapabilities { analysis: 0.5, quality: 0.5, speed: 0.5, creativity: 0.5, reliability: 0.5 },
+            emotional_state: EmotionalState::calm(),
+            performance: PerformanceHistory { tasks_completed: 0, avg_response_time_ms: 0.0, accuracy: 1.0, memory_usage_mb: 0.0 },
+            created_at: 0,
+            last_used: 0,
+            total_tasks: 0,
+            success_rate: 1.0,
+            session_id: None,
+        };
+        memory.save(agent.clone()).unwrap();
+        let loaded = memory.load("test-1");
+        assert!(loaded.is_some());
+        assert_eq!(loaded.unwrap().name, "test_agent");
+    }
+
+    #[test]
+    fn test_agent_memory_load_not_found() {
+        let memory = AgentMemory::new();
+        assert!(memory.load("nonexistent").is_none());
+    }
+
+    #[test]
+    fn test_cognitive_session_new() {
+        let session = CognitiveSession::new(vec!["agent1".into()], "test");
+        assert!(!session.consensus_reached);
+        assert!(session.exchanges.is_empty());
+    }
+
+    #[test]
+    fn test_cognitive_session_add_exchange() {
+        let mut session = CognitiveSession::new(vec!["agent1".into()], "test");
+        session.add_exchange("agent1", "hello");
+        assert_eq!(session.exchanges.len(), 1);
+    }
+
+    #[test]
+    fn test_cognitive_session_reach_consensus() {
+        let mut session = CognitiveSession::new(vec!["agent1".into()], "test");
+        session.reach_consensus();
+        assert!(session.consensus_reached);
+    }
+}
+
 fn hsv_to_rgb(h: f32, s: f32, v: f32) -> (u8, u8, u8) {
     let h = h * 360.0;
     let c = v * s;
