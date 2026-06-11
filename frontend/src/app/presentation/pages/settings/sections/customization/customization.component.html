@@ -1,0 +1,26 @@
+<section class="settings-section">
+  <h3>Customization</h3>
+  <div class="settings-field">
+    <label>System Name</label>
+    <input type="text" [(ngModel)]="name" placeholder="UMBRA" />
+  </div>
+  <div class="settings-field">
+    <label>Response Style</label>
+    <select [(ngModel)]="responseStyle">
+      <option value="concise">Concise</option>
+      <option value="detailed">Detailed</option>
+      <option value="balanced">Balanced</option>
+    </select>
+  </div>
+  <div class="settings-field">
+    <label>Persona</label>
+    <select [(ngModel)]="persona">
+      <option value="professional">Professional</option>
+      <option value="friendly">Friendly</option>
+      <option value="witty">Witty</option>
+    </select>
+  </div>
+  <div class="settings-actions">
+    <button class="settings-btn primary" (click)="save()">Save Customization</button>
+  </div>
+</section>

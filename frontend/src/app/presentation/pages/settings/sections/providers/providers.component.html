@@ -1,0 +1,66 @@
+<section class="settings-section">
+  <div class="provider-tabs">
+    <button *ngFor="let tab of tabs" class="provider-tab"
+            [class.active]="currentCategory === tab.id"
+            (click)="setCategory(tab.id)">{{ tab.label }}</button>
+  </div>
+
+  <div class="provider-list">
+    <div class="provider-card" *ngFor="let p of filteredProviders">
+      <div class="provider-card-header">
+        <span class="provider-name">{{ p.name }}</span>
+        <span class="status-dot" [class.status-green]="isConfigured(p.id)"
+              [class.status-yellow]="testing.has(p.id)"
+              [class.status-red]="tested.get(p.id) === false" [class.status-green]="tested.get(p.id) === true"></span>
+      </div>
+      <div class="provider-card-body">
+        <div class="settings-field">
+          <label>API Key</label>
+          <input type="password" [(ngModel)]="keys[p.id]" placeholder="API Key" />
+        </div>
+        <div class="settings-field">
+          <label>Base URL</label>
+          <input type="text" [(ngModel)]="urls[p.id]" [placeholder]="p.base_url" />
+        </div>
+        <div class="provider-card-actions">
+          <button class="settings-btn" (click)="testProvider(p.id)">Test</button>
+          <button class="settings-btn primary" (click)="saveProvider(p.id)">Save</button>
+        </div>
+      </div>
+    </div>
+    <div class="empty-state" *ngIf="filteredProviders.length === 0">No providers</div>
+  </div>
+</section>
+
+<section class="settings-section">
+  <h3>Models</h3>
+  <div class="settings-field">
+    <label>Primary Provider</label>
+    <div class="model-config-row">
+      <select [(ngModel)]="primaryProvider" (change)="onPrimaryChange()">
+        <option value="">-- Select --</option>
+        <option *ngFor="let p of providers" [value]="p.id">{{ p.name }}</option>
+      </select>
+      <select [(ngModel)]="primaryModel">
+        <option value="">-- Model --</option>
+        <option *ngFor="let m of primaryModels" [value]="m">{{ m }}</option>
+      </select>
+    </div>
+  </div>
+  <div class="settings-field">
+    <label>Secondary Provider</label>
+    <div class="model-config-row">
+      <select [(ngModel)]="secondaryProvider" (change)="onSecondaryChange()">
+        <option value="">-- Select --</option>
+        <option *ngFor="let p of providers" [value]="p.id">{{ p.name }}</option>
+      </select>
+      <select [(ngModel)]="secondaryModel">
+        <option value="">-- Model --</option>
+        <option *ngFor="let m of secondaryModels" [value]="m">{{ m }}</option>
+      </select>
+    </div>
+  </div>
+  <div class="settings-actions">
+    <button class="settings-btn primary" (click)="saveModelConfig()">Save Configuration</button>
+  </div>
+</section>

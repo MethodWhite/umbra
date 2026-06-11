@@ -1,0 +1,42 @@
+<section class="settings-section">
+  <h3>API Key Vault</h3>
+  <div class="vault-status-bar">
+    <span class="vault-icon">{{ status?.locked ? 'Locked' : 'Unlocked' }}</span>
+    <span class="vault-key-count" *ngIf="!status?.locked">Keys: {{ status?.key_count || 0 }}</span>
+  </div>
+
+  <div *ngIf="status?.locked" class="vault-locked-view">
+    <div class="settings-field">
+      <input type="password" [(ngModel)]="passphrase" placeholder="Passphrase (optional)" />
+      <button class="settings-btn" (click)="unlock()">Unlock</button>
+    </div>
+  </div>
+
+  <div *ngIf="!status?.locked" class="vault-unlocked-view">
+    <div class="vault-actions">
+      <button class="settings-btn" (click)="lock()">Lock</button>
+      <button class="settings-btn" (click)="migrate()">Migrate from .env</button>
+      <button class="settings-btn primary" (click)="testAll()">Test all keys</button>
+    </div>
+    <div class="settings-field">
+      <label>Auto-lock (minutes)</label>
+      <select [(ngModel)]="autoLockMinutes" (change)="setAutoLock()">
+        <option [value]="0">Disabled</option>
+        <option [value]="5">5</option>
+        <option [value]="15">15</option>
+        <option [value]="30">30</option>
+        <option [value]="60">60</option>
+      </select>
+    </div>
+    <div class="vault-keys-list">
+      <div class="vault-key-row" *ngFor="let p of status?.providers_with_keys || []">
+        <span>{{ p.id }}</span>
+        <span class="key-status" [class.valid]="testResults[p.id] === true"
+              [class.invalid]="testResults[p.id] === false">
+          {{ testResults[p.id] === true ? 'Valid' : testResults[p.id] === false ? 'Invalid' : 'Untested' }}
+        </span>
+      </div>
+      <div class="vault-keys-empty" *ngIf="!status?.providers_with_keys?.length">No API Keys in vault</div>
+    </div>
+  </div>
+</section>

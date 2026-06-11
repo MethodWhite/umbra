@@ -1,0 +1,115 @@
+<div class="monitor-header">
+  <h1>System Monitor</h1>
+  <button class="nav-btn" routerLink="/chat">Back to Chat</button>
+</div>
+
+<div class="monitor-grid">
+  <div class="monitor-card hardware">
+    <h3>Hardware</h3>
+    <div class="card-content">
+      <div class="metric-row" *ngIf="hardware?.cpu">
+        <span class="metric-label">CPU</span>
+        <span class="metric-value">{{ hardware?.cpu?.name }}</span>
+        <span class="metric-detail">{{ hardware?.cpu?.usage }}% | {{ hardware?.cpu?.temperature }}°C | {{ hardware?.cpu?.cores }} cores</span>
+      </div>
+      <div class="metric-row" *ngIf="hardware?.gpu">
+        <span class="metric-label">GPU</span>
+        <span class="metric-value">{{ hardware?.gpu?.name }}</span>
+        <span class="metric-detail">{{ hardware?.gpu?.usage }}% | {{ hardware?.gpu?.temperature }}°C</span>
+      </div>
+      <div class="metric-row" *ngIf="hardware?.ram">
+        <span class="metric-label">RAM</span>
+        <span class="metric-detail">{{ formatBytes(hardware!.ram.used) }} / {{ formatBytes(hardware!.ram.total) }}</span>
+      </div>
+      <div class="metric-row" *ngIf="hardware?.vram">
+        <span class="metric-label">VRAM</span>
+        <span class="metric-detail">{{ formatBytes(hardware!.vram.used) }} / {{ formatBytes(hardware!.vram.total) }}</span>
+      </div>
+      <div class="empty-state" *ngIf="!hardware">Loading hardware data...</div>
+    </div>
+  </div>
+
+  <div class="monitor-card models">
+    <h3>Models</h3>
+    <div class="card-content">
+      <div class="metric-row" *ngFor="let m of models">
+        <span class="metric-label">{{ m.type }}</span>
+        <span class="metric-value">{{ m.name }}</span>
+        <span class="metric-detail">
+          <span class="status-badge" [class.loaded]="m.status === 'loaded'" [class.loading]="m.status === 'loading'">{{ m.status }}</span>
+          {{ m.provider }}
+        </span>
+      </div>
+      <div class="empty-state" *ngIf="!models.length">No models loaded</div>
+    </div>
+  </div>
+
+  <div class="monitor-card agents">
+    <h3>Sub-Agents</h3>
+    <div class="card-content">
+      <div class="metric-row" *ngFor="let a of agents">
+        <span class="metric-label">{{ a.name }}</span>
+        <span class="metric-value">{{ a.task }}</span>
+        <span class="metric-detail">
+          <span class="status-badge" [class.running]="a.status === 'running'" [class.error]="a.status === 'error'">{{ a.status }}</span>
+          {{ formatUptime(a.uptime) }}
+        </span>
+      </div>
+      <div class="empty-state" *ngIf="!agents.length">No sub-agents active</div>
+    </div>
+  </div>
+
+  <div class="monitor-card training">
+    <h3>Training
+      <button class="small-btn" (click)="triggerTraining()" [disabled]="training?.active">Trigger</button>
+    </h3>
+    <div class="card-content">
+      <div *ngIf="training?.active" class="training-progress">
+        <div class="metric-row">
+          <span class="metric-label">Epoch</span>
+          <span class="metric-detail">{{ training?.current_epoch }} / {{ training?.total_epochs }}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Loss</span>
+          <span class="metric-detail">{{ training?.loss?.toFixed(4) }}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Accuracy</span>
+          <span class="metric-detail">{{ (training?.accuracy || 0) * 100 | number:'1.0-1' }}%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Dataset</span>
+          <span class="metric-detail">{{ training?.dataset_size }} samples</span>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="!training?.active">No active training session</div>
+      <div class="empty-state" *ngIf="!training">Loading...</div>
+    </div>
+  </div>
+
+  <div class="monitor-card debugger">
+    <h3>Debugger</h3>
+    <div class="card-content">
+      <div class="metric-row">
+        <span class="metric-label">Health</span>
+        <span class="metric-value">
+          <span class="status-badge" [class.healthy]="debugger?.health === 'healthy'"
+                [class.degraded]="debugger?.health === 'degraded'"
+                [class.down]="debugger?.health === 'down'">{{ debugger?.health || '--' }}</span>
+        </span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Latency</span>
+        <span class="metric-detail">{{ debugger?.latency_ms }}ms</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Error Rate</span>
+        <span class="metric-detail">{{ (debugger?.error_rate || 0) * 100 | number:'1.1-1' }}%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Uptime</span>
+        <span class="metric-detail">{{ formatUptime(debugger?.uptime || 0) }}</span>
+      </div>
+    </div>
+  </div>
+</div>

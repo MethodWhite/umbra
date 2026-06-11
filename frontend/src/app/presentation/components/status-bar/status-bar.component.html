@@ -1,0 +1,14 @@
+<div class="status-bar">
+  <div class="status-left">
+    <span class="brand">UMBRA</span>
+  </div>
+  <div class="status-center">
+    <span class="status-label" *ngIf="statusText">{{ statusText }}</span>
+  </div>
+  <div class="status-right">
+    <span class="connection-dot" [class.connected]="wsState === 'connected'"
+          [class.reconnecting]="wsState === 'reconnecting'" [class.disconnected]="wsState === 'disconnected'">
+    </span>
+    <span class="connection-text">{{ wsLabel }}</span>
+  </div>
+</div>

@@ -1,0 +1,350 @@
+<div class="settings-shell">
+  <div class="settings-hud">
+    <div class="hud-header">
+      <button class="hud-back-btn" routerLink="/chat" data-i18n="settings.back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M19 12H5m7-7-7 7 7 7"/>
+        </svg>
+        <span>BACK</span>
+      </button>
+      <h1 class="hud-title" data-i18n="settings.title">SETTINGS</h1>
+      <div class="hud-header-actions">
+        <select class="hud-lang-select" [value]="currentLang" (change)="setLanguage($any($event.target).value)">
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="zh">中文</option>
+        </select>
+      </div>
+    </div>
+
+    <nav class="hud-tabs">
+      <button *ngFor="let tab of tabs"
+              class="hud-tab"
+              [class.active]="currentTab === tab.id"
+              (click)="switchTab(tab.id)"
+              [attr.data-i18n]="tab.labelKey">
+        <span class="tab-indicator"></span>
+        {{ tab.labelKey === 'settings.tab.vault' ? 'VAULT' :
+           tab.labelKey === 'settings.tab.providers' ? 'PROVIDERS' :
+           tab.labelKey === 'settings.tab.models' ? 'MODELS' :
+           tab.labelKey === 'settings.tab.agents' ? 'AGENTS' : 'HARDWARE' }}
+      </button>
+    </nav>
+
+    <div class="hud-content">
+
+      <!-- ===== VAULT TAB ===== -->
+      <div class="tab-panel" *ngIf="currentTab === 'vault'">
+        <div class="panel-header">
+          <span class="panel-glow"></span>
+          <h2 data-i18n="vault.title">API KEY VAULT</h2>
+          <div class="vault-indicator" [class.locked]="vaultStatus?.locked" [class.unlocked]="!vaultStatus?.locked">
+            <span class="indicator-dot"></span>
+            <span data-i18n="vault.status">{{ vaultStatus?.locked ? 'LOCKED' : 'UNLOCKED' }}</span>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <div *ngIf="vaultStatus?.locked" class="vault-locked">
+            <div class="hud-field">
+              <label data-i18n="vault.passphrase">Passphrase</label>
+              <div class="hud-input-group">
+                <input type="password" [(ngModel)]="passphrase" placeholder="Enter passphrase..." class="hud-input" />
+                <button class="hud-btn primary" (click)="unlockVault()" data-i18n="vault.unlock">UNLOCK</button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!vaultStatus?.locked" class="vault-unlocked">
+            <div class="vault-actions">
+              <button class="hud-btn" (click)="lockVault()" data-i18n="vault.lock">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                LOCK
+              </button>
+              <button class="hud-btn" (click)="migrateVault()" data-i18n="vault.migrate">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M21 12a9 9 0 1 1-9-9"/><path d="M12 3v9h9"/>
+                </svg>
+                MIGRATE
+              </button>
+            </div>
+
+            <div class="migrate-message" *ngIf="migrateMessage" [class.success]="migrateSuccess">
+              {{ migrateMessage }}
+            </div>
+
+            <div class="vault-keys-section">
+              <div class="section-label">
+                <span data-i18n="vault.keys_stored">Keys Stored</span>
+                <span class="key-count-badge">{{ vaultStatus?.key_count || 0 }}</span>
+              </div>
+              <div class="vault-keys-list" *ngIf="vaultStatus?.providers_with_keys?.length">
+                <div class="vault-key-row" *ngFor="let p of vaultStatus?.providers_with_keys">
+                  <span class="key-provider-name">{{ p.id }}</span>
+                  <button class="hud-btn small" (click)="testVaultProvider(p.id)">
+                    <span *ngIf="vaultTestResults[p.id] === undefined">TEST</span>
+                    <span *ngIf="vaultTestResults[p.id] === true" class="test-pass">VALID</span>
+                    <span *ngIf="vaultTestResults[p.id] === false" class="test-fail">INVALID</span>
+                  </button>
+                </div>
+              </div>
+              <div class="empty-state" *ngIf="!vaultStatus?.providers_with_keys?.length" data-i18n="vault.no_keys">
+                NO KEYS STORED
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PROVIDERS TAB ===== -->
+      <div class="tab-panel" *ngIf="currentTab === 'providers'">
+        <div class="panel-header">
+          <span class="panel-glow"></span>
+          <h2 data-i18n="providers.title">API PROVIDERS</h2>
+        </div>
+
+        <div class="panel-body">
+          <div class="provider-category-tabs">
+            <button *ngFor="let cat of providerCategoryTabs"
+                    class="category-tab"
+                    [class.active]="currentProviderCategory === cat.id"
+                    (click)="setProviderCategory(cat.id)">
+              {{ cat.label }}
+            </button>
+          </div>
+
+          <div class="provider-scroll">
+            <div class="provider-card" *ngFor="let p of filteredProviders">
+              <div class="provider-header">
+                <div class="provider-info">
+                  <span class="provider-name">{{ p.name }}</span>
+                  <span class="provider-api">{{ p.api_type }}</span>
+                </div>
+                <div class="provider-meta">
+                  <span class="category-badge" [class.chinese]="getCategoryBadge(p) === 'CHINESE'"
+                        [class.local]="getCategoryBadge(p) === 'LOCAL'"
+                        [class.western]="getCategoryBadge(p) === 'WESTERN'">
+                    {{ getCategoryBadge(p) }}
+                  </span>
+                  <span class="status-dot"
+                        [class.configured]="isProviderConfigured(p.id)"
+                        [class.testing]="isProviderTesting(p.id)"
+                        [class.invalid]="getProviderTestResult(p.id) === false"
+                        [class.valid]="getProviderTestResult(p.id) === true">
+                  </span>
+                </div>
+              </div>
+              <div class="provider-body">
+                <div class="hud-field">
+                  <label data-i18n="providers.api_key">API Key</label>
+                  <input type="password" [(ngModel)]="providerKeys[p.id]"
+                         placeholder="sk-..." class="hud-input" />
+                </div>
+                <div class="provider-actions">
+                  <button class="hud-btn" (click)="testProvider(p.id)" [disabled]="isProviderTesting(p.id)">
+                    {{ isProviderTesting(p.id) ? 'TESTING...' : 'TEST' }}
+                  </button>
+                  <button class="hud-btn primary" (click)="saveProvider(p.id)">SAVE</button>
+                </div>
+              </div>
+            </div>
+            <div class="empty-state" *ngIf="filteredProviders.length === 0" data-i18n="providers.no_providers">
+              NO PROVIDERS
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== MODELS TAB ===== -->
+      <div class="tab-panel" *ngIf="currentTab === 'models'">
+        <div class="panel-header">
+          <span class="panel-glow"></span>
+          <h2 data-i18n="settings.tab.models">MODELS</h2>
+        </div>
+
+        <div class="panel-body">
+          <div class="detection-section">
+            <h3 class="section-title">DETECTED RUNNERS</h3>
+            <div class="detection-grid">
+              <div class="detection-card" [class.detected]="setupStatus?.ollama_detected">
+                <span class="detection-name">Ollama</span>
+                <span class="detection-status">{{ setupStatus?.ollama_detected ? 'DETECTED' : 'NOT FOUND' }}</span>
+              </div>
+              <div class="detection-card" [class.detected]="setupStatus?.llamacpp_detected">
+                <span class="detection-name">llama.cpp</span>
+                <span class="detection-status">{{ setupStatus?.llamacpp_detected ? 'DETECTED' : 'NOT FOUND' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="model-selector-section">
+            <h3 class="section-title">AVAILABLE MODELS</h3>
+            <div class="model-count-badge">{{ allDetectedModels.length }} models</div>
+
+            <div class="model-selectors">
+              <div class="hud-field">
+                <label>PRIMARY MODEL</label>
+                <select class="hud-select" [(ngModel)]="primaryModel" (change)="selectPrimaryModel(primaryModel)">
+                  <option value="">-- SELECT PRIMARY --</option>
+                  <option *ngFor="let m of allDetectedModels" [value]="m">{{ m }}</option>
+                </select>
+              </div>
+              <div class="hud-field">
+                <label>SECONDARY MODEL</label>
+                <select class="hud-select" [(ngModel)]="secondaryModel" (change)="selectSecondaryModel(secondaryModel)">
+                  <option value="">-- SELECT SECONDARY --</option>
+                  <option *ngFor="let m of allDetectedModels" [value]="m">{{ m }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="model-status-msg" *ngIf="modelStatus">
+              <span class="status-flash"></span>
+              {{ modelStatus }}
+            </div>
+          </div>
+
+          <div class="model-list-section">
+            <h3 class="section-title">DETECTED MODELS</h3>
+            <div class="model-tags">
+              <span class="model-tag" *ngFor="let m of allDetectedModels">{{ m }}</span>
+            </div>
+            <div class="empty-state" *ngIf="allDetectedModels.length === 0">NO MODELS DETECTED</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== AGENTS TAB ===== -->
+      <div class="tab-panel" *ngIf="currentTab === 'agents'">
+        <div class="panel-header">
+          <span class="panel-glow"></span>
+          <h2 data-i18n="settings.tab.agents">SUB-AGENTS</h2>
+        </div>
+
+        <div class="panel-body">
+          <div class="active-agent-card" *ngIf="getActiveAgent() as active">
+            <div class="active-agent-label">ACTIVE AGENT</div>
+            <div class="active-agent-name">{{ active.name }}</div>
+            <div class="active-agent-status">{{ active.status | uppercase }}</div>
+          </div>
+
+          <div class="agent-list">
+            <div class="agent-row" *ngFor="let a of agents">
+              <div class="agent-info">
+                <span class="agent-name">{{ a.name }}</span>
+                <span class="agent-task" *ngIf="a.task">{{ a.task }}</span>
+                <span class="agent-status-badge"
+                      [class.running]="a.status === 'running'"
+                      [class.idle]="a.status === 'idle'"
+                      [class.error]="a.status === 'error'">
+                  {{ a.status | uppercase }}
+                </span>
+              </div>
+              <div class="agent-toggle">
+                <button class="hud-toggle" [class.active]="a.enabled"
+                        (click)="toggleAgent(a)" [disabled]="agentTesting.has(a.id)">
+                  <span class="toggle-track">
+                    <span class="toggle-thumb"></span>
+                  </span>
+                  <span class="toggle-label">{{ a.enabled ? 'ENABLED' : 'DISABLED' }}</span>
+                </button>
+              </div>
+            </div>
+            <div class="empty-state" *ngIf="agents.length === 0" data-i18n="monitor.no_agents">
+              NO SUB-AGENTS
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== HARDWARE TAB ===== -->
+      <div class="tab-panel" *ngIf="currentTab === 'hardware'">
+        <div class="panel-header">
+          <span class="panel-glow"></span>
+          <h2 data-i18n="settings.tab.hardware">HARDWARE</h2>
+        </div>
+
+        <div class="panel-body">
+          <div class="hardware-grid">
+            <div class="hw-card cpu">
+              <div class="hw-card-header">
+                <h3 data-i18n="monitor.cpu">CPU</h3>
+                <span class="hw-temp" [class.warm]="(hardware?.cpu?.temperature || 0) > 70"
+                      [class.hot]="(hardware?.cpu?.temperature || 0) > 85">
+                  {{ hardware?.cpu?.temperature || '--' }}°C
+                </span>
+              </div>
+              <div class="hw-card-body">
+                <div class="hw-name">{{ hardware?.cpu?.name || '--' }}</div>
+                <div class="hw-bar-container">
+                  <div class="hw-bar-fill cpu-fill" [style.width.%]="hardware?.cpu?.usage || 0"></div>
+                </div>
+                <div class="hw-stats">
+                  <span>{{ hardware?.cpu?.usage || 0 }}%</span>
+                  <span>{{ hardware?.cpu?.cores || '--' }} cores</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="hw-card gpu">
+              <div class="hw-card-header">
+                <h3 data-i18n="monitor.gpu">GPU</h3>
+                <span class="hw-temp" [class.warm]="(hardware?.gpu?.temperature || 0) > 70"
+                      [class.hot]="(hardware?.gpu?.temperature || 0) > 85">
+                  {{ hardware?.gpu?.temperature || '--' }}°C
+                </span>
+              </div>
+              <div class="hw-card-body">
+                <div class="hw-name">{{ hardware?.gpu?.name || '--' }}</div>
+                <div class="hw-bar-container">
+                  <div class="hw-bar-fill gpu-fill" [style.width.%]="hardware?.gpu?.usage || 0"></div>
+                </div>
+                <div class="hw-stats">
+                  <span>{{ hardware?.gpu?.usage || 0 }}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="hw-card ram">
+              <div class="hw-card-header">
+                <h3 data-i18n="monitor.ram">RAM</h3>
+                <span class="hw-value">{{ formatBytes(hardware?.ram?.used || 0) }} / {{ formatBytes(hardware?.ram?.total || 0) }}</span>
+              </div>
+              <div class="hw-card-body">
+                <div class="hw-bar-container">
+                  <div class="hw-bar-fill ram-fill" [style.width.%]="getRamPercent()"></div>
+                </div>
+                <div class="hw-stats">
+                  <span>{{ getRamPercent() }}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="hw-card vram">
+              <div class="hw-card-header">
+                <h3 data-i18n="monitor.vram">VRAM</h3>
+                <span class="hw-value">{{ formatBytes(hardware?.vram?.used || 0) }} / {{ formatBytes(hardware?.vram?.total || 0) }}</span>
+              </div>
+              <div class="hw-card-body">
+                <div class="hw-bar-container">
+                  <div class="hw-bar-fill vram-fill" [style.width.%]="getVramPercent()"></div>
+                </div>
+                <div class="hw-stats">
+                  <span>{{ getVramPercent() }}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quantization-recommendation">
+            <div class="rec-label">RECOMMENDED QUANTIZATION</div>
+            <div class="rec-value">{{ getRecommendedQuantization() }}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

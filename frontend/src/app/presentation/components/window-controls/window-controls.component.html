@@ -1,0 +1,8 @@
+<div class="electron-titlebar" *ngIf="isElectron">
+  <span class="logo-area">UMBRA</span>
+  <div class="window-buttons">
+    <button class="win-btn" (click)="minimize()">─</button>
+    <button class="win-btn" (click)="maximize()">□</button>
+    <button class="win-btn btn-close" (click)="close()">✕</button>
+  </div>
+</div>

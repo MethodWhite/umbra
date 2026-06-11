@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-config-schema/schema.json",
+  "productName": "UMBRA",
+  "version": "0.1.0",
+  "identifier": "com.methodwhite.umbra",
+  "build": {
+    "frontendDist": "../frontend/dist/browser"
+  },
+  "app": {
+    "windows": [{
+      "title": "UMBRA",
+      "width": 1400,
+      "height": 900,
+      "minWidth": 1024,
+      "minHeight": 700,
+      "decorations": false,
+      "transparent": true,
+      "backgroundColor": "#000000",
+      "center": true
+    }],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' 'unsafe-hashes'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self' http://127.0.0.1:8484 ws: wss:; media-src 'self' blob:;"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png"]
+  }
+}

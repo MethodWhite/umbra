@@ -1,0 +1,58 @@
+<section class="settings-section">
+  <h3>System Mode</h3>
+  <div class="mode-selector">
+    <button class="mode-btn" [class.active]="mode === 'secure'" (click)="mode = 'secure'">
+      <span class="mode-icon">Secure</span>
+      <span class="mode-desc">Maximum safety restrictions</span>
+    </button>
+    <button class="mode-btn" [class.active]="mode === 'balanced'" (click)="mode = 'balanced'">
+      <span class="mode-icon">Balanced</span>
+      <span class="mode-desc">Recommended default</span>
+    </button>
+    <button class="mode-btn" [class.active]="mode === 'unrestricted'" (click)="mode = 'unrestricted'">
+      <span class="mode-icon">Unrestricted</span>
+      <span class="mode-desc">Full capabilities</span>
+    </button>
+  </div>
+</section>
+
+<section class="settings-section">
+  <h3>System Status</h3>
+  <div class="status-grid">
+    <div class="status-row">
+      <span class="status-dot" [class.status-green]="status?.claude_code_installed"
+            [class.status-red]="!status?.claude_code_installed"></span>
+      <span>Claude Code CLI</span>
+    </div>
+    <div class="status-row">
+      <span class="status-dot" [class.status-green]="status?.calendar_accessible"
+            [class.status-red]="!status?.calendar_accessible"></span>
+      <span>Calendar</span>
+    </div>
+    <div class="status-row">
+      <span class="status-dot" [class.status-green]="status?.mail_accessible"
+            [class.status-red]="!status?.mail_accessible"></span>
+      <span>Mail</span>
+    </div>
+    <div class="status-row">
+      <span class="status-dot" [class.status-green]="status?.notes_accessible"
+            [class.status-red]="!status?.notes_accessible"></span>
+      <span>Apple Notes</span>
+    </div>
+    <div class="status-row">
+      <span class="status-dot status-green"></span>
+      <span>Server</span>
+      <span class="status-detail" *ngIf="status">port {{ status.server_port }} | up {{ formatUptime(status.uptime_seconds) }}</span>
+    </div>
+  </div>
+</section>
+
+<section class="settings-section">
+  <h3>System Info</h3>
+  <div class="sysinfo-grid">
+    <div class="sysinfo-row"><span class="sysinfo-label">Memory</span><span>{{ status?.memory_count || '--' }}</span></div>
+    <div class="sysinfo-row"><span class="sysinfo-label">Tasks</span><span>{{ status?.task_count || '--' }}</span></div>
+    <div class="sysinfo-row"><span class="sysinfo-label">Port</span><span>{{ status?.server_port || '--' }}</span></div>
+    <div class="sysinfo-row"><span class="sysinfo-label">Uptime</span><span>{{ status ? formatUptime(status.uptime_seconds) : '--' }}</span></div>
+  </div>
+</section>

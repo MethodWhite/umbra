@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <circle cx="60" cy="60" r="55" stroke="rgba(0,212,255,0.3)" stroke-width="0.5"/>
+  <circle cx="60" cy="60" r="40" stroke="rgba(0,212,255,0.15)" stroke-width="0.3"/>
+  <circle cx="60" cy="60" r="25" stroke="rgba(0,212,255,0.08)" stroke-width="0.2"/>
+  <circle cx="60" cy="60" r="8" fill="rgba(0,212,255,0.4)"/>
+  <circle cx="60" cy="60" r="4" fill="rgba(0,212,255,0.7)"/>
+  <circle cx="60" cy="60" r="1.5" fill="#00d4ff"/>
+  <line x1="60" y1="5" x2="60" y2="20" stroke="rgba(0,212,255,0.2)" stroke-width="0.5"/>
+  <line x1="60" y1="100" x2="60" y2="115" stroke="rgba(0,212,255,0.2)" stroke-width="0.5"/>
+  <line x1="5" y1="60" x2="20" y2="60" stroke="rgba(0,212,255,0.2)" stroke-width="0.5"/>
+  <line x1="100" y1="60" x2="115" y2="60" stroke="rgba(0,212,255,0.2)" stroke-width="0.5"/>
+  <circle cx="60" cy="5" r="1.5" fill="rgba(0,212,255,0.4)"/>
+  <circle cx="60" cy="115" r="1.5" fill="rgba(0,212,255,0.4)"/>
+  <circle cx="5" cy="60" r="1.5" fill="rgba(0,212,255,0.4)"/>
+  <circle cx="115" cy="60" r="1.5" fill="rgba(0,212,255,0.4)"/>
+  <circle cx="30" cy="30" r="1.5" fill="rgba(0,212,255,0.15)"/>
+  <circle cx="90" cy="30" r="1.5" fill="rgba(0,212,255,0.15)"/>
+  <circle cx="30" cy="90" r="1.5" fill="rgba(0,212,255,0.15)"/>
+  <circle cx="90" cy="90" r="1.5" fill="rgba(0,212,255,0.15)"/>
+</svg>

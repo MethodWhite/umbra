@@ -1,0 +1,47 @@
+<section class="settings-section">
+  <h3>Voice & Audio</h3>
+  <div class="settings-field">
+    <label>Speech Recognition Language</label>
+    <select [(ngModel)]="sttLanguage">
+      <option value="en-US">English (US)</option>
+      <option value="es-ES">Español (España)</option>
+      <option value="es-MX">Español (México)</option>
+      <option value="zh-CN">中文 (简体)</option>
+      <option value="zh-TW">中文 (繁體)</option>
+      <option value="fr-FR">Français</option>
+      <option value="de-DE">Deutsch</option>
+      <option value="ja-JP">日本語</option>
+      <option value="ko-KR">한국어</option>
+      <option value="pt-BR">Português (Brasil)</option>
+      <option value="ru-RU">Русский</option>
+      <option value="ar-SA">العربية</option>
+    </select>
+  </div>
+  <div class="settings-field">
+    <label>TTS Engine</label>
+    <select [(ngModel)]="ttsEngine">
+      <option value="fish">Fish Audio</option>
+      <option value="piper">Piper (local)</option>
+      <option value="nvidia-riva">NVIDIA Riva</option>
+      <option value="browser">Browser Speech API</option>
+    </select>
+  </div>
+  <div class="settings-field">
+    <label>Wake Word</label>
+    <select [(ngModel)]="wakeWord">
+      <option value="umbra">UMBRA</option>
+      <option value="jarvis">JARVIS</option>
+      <option value="computer">Computer</option>
+      <option value="none">None (always listening)</option>
+    </select>
+  </div>
+  <div class="settings-field">
+    <label>
+      <input type="checkbox" [(ngModel)]="voiceFeedback" />
+      <span style="margin-left:6px">Voice feedback on actions</span>
+    </label>
+  </div>
+  <div class="settings-actions">
+    <button class="settings-btn primary" (click)="save()">Save Voice Settings</button>
+  </div>
+</section>

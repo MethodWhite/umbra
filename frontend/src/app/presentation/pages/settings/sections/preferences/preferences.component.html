@@ -1,0 +1,22 @@
+<section class="settings-section">
+  <h3>Preferences</h3>
+  <div class="settings-field">
+    <label>Your Name</label>
+    <input type="text" [(ngModel)]="userName" placeholder="Your name" />
+  </div>
+  <div class="settings-field">
+    <label>Honorific</label>
+    <select [(ngModel)]="honorific">
+      <option value="sir">Sir</option>
+      <option value="ma'am">Ma'am</option>
+      <option value="none">None</option>
+    </select>
+  </div>
+  <div class="settings-field">
+    <label>Calendar Accounts</label>
+    <textarea [(ngModel)]="calendarAccounts" rows="2" placeholder="auto (or comma-separated emails)"></textarea>
+  </div>
+  <div class="settings-actions">
+    <button class="settings-btn primary" (click)="save()">Save Preferences</button>
+  </div>
+</section>
