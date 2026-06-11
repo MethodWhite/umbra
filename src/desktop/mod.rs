@@ -571,10 +571,10 @@ impl App {
     }
 
     fn render_hud_view(&mut self, ui: &mut egui::Ui, r: Rect, t: f32, sphere_cx: f32, sphere_cy: f32, primary: Color32) {
+        let hue = self.current_emotion.hue();
+        let sat = self.current_emotion.saturation();
+        let intensity = self.current_emotion.intensity();
         if !self.sphere_selected {
-            let hue = self.current_emotion.hue();
-            let sat = self.current_emotion.saturation();
-            let intensity = self.current_emotion.intensity();
             let activity = match self.state {
                 State::Idle => 0.3,
                 State::Listening => 0.6,
@@ -585,23 +585,7 @@ impl App {
             self.main_sphere.render(&ui.painter(), Pos2::new(sphere_cx, sphere_cy), hue, sat, intensity, activity, t, 0.8, 1.0, 0.2, 0.0, 1.0);
             self.render_emotion_label(ui, sphere_cx, sphere_cy);
         } else {
-            let hue = self.current_emotion.hue();
-            let sat = self.current_emotion.saturation();
-            let intensity = self.current_emotion.intensity();
             self.main_sphere.render(&ui.painter(), Pos2::new(sphere_cx, sphere_cy), hue, sat, intensity, 0.6, t, 0.4, 0.6, 0.1, 0.0, 0.8);
-
-            let analysis_rect = Rect::from_min_size(Pos2::new(r.left() + 20.0, r.top() + 60.0), Vec2::new(r.width() * 0.5, r.height() * 0.5));
-            ui.painter().rect_filled(analysis_rect, Rounding::same(8.0), Color32::from_rgba_premultiplied(0, 8, 20, 230));
-            ui.painter().rect_stroke(analysis_rect, Rounding::same(8.0), Stroke::new(1.0, Color32::from_rgba_premultiplied(0, 200, 255, 60)));
-            ui.allocate_ui_at_rect(analysis_rect.shrink(12.0), |ui| {
-                ui.label(RichText::new("🧠 Umbra Analysis").color(primary).size(14.0).strong());
-                ui.separator();
-                ui.label(RichText::new(&self.umbra_analysis).color(Color32::from_rgb(180, 200, 220)).size(10.0).monospace());
-                ui.separator();
-                let state_str = format!("State: {:?} | Emotion: {}", self.state, self.current_emotion);
-                ui.label(RichText::new(&state_str).color(Color32::from_rgb(100, 150, 180)).size(9.0).monospace());
-                ui.label(RichText::new("Click sphere again to restore").color(Color32::from_rgb(120, 160, 190)).size(9.0).monospace());
-            });
         }
     }
 
