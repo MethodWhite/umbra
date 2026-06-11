@@ -5,7 +5,7 @@ use crate::engine::MateriaCore;
 use crate::engine::SynapsisMemory;
 use crate::security::SecurityGate;
 use crate::persona::JarvisPersona;
-use crate::memory::{MemoryEngine, MemoryEntry};
+use crate::memory::MemoryEngine;
 use crate::agent_memory::EmotionalState;
 
 #[derive(Debug, Clone)]

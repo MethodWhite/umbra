@@ -484,6 +484,7 @@ async fn handle_action(
 #[derive(serde::Deserialize)]
 struct MemorySearchRequest {
     query: String,
+    #[allow(dead_code)]
     limit: Option<usize>,
 }
 
