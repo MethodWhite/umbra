@@ -92,7 +92,7 @@ mod tests {
 
     fn make_test_agent(name: &str, success_rate: f32) -> AgentParams {
         AgentParams {
-            id: name.into(), name: name.into(), agent_type: AgentType::LLM,
+            id: name.into(), name: name.into(), agent_type: crate::agent_memory::AgentType::LLM,
             capabilities: AgentCapabilities { analysis: 0.5, quality: 0.5, speed: 0.5, creativity: 0.5, reliability: 0.5 },
             emotional_state: EmotionalState::calm(),
             performance: PerformanceHistory { tasks_completed: 0, avg_response_time_ms: 0.0, accuracy: 1.0, memory_usage_mb: 0.0 },

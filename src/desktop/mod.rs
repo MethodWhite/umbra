@@ -1,6 +1,12 @@
 // Zone 1 — Desktop GUI
 #![allow(deprecated)]
-use eframe::egui::{self, Color32, Vec2, RichText, Button, Stroke, Pos2, Align2, FontId, Rect, Rounding, TextEdit, scroll_area::ScrollBarVisibility};
+pub mod helpers;
+pub mod panels;
+pub mod actions;
+
+use helpers::*;
+
+use eframe::egui::{self, Color32, Vec2, RichText, Button, Stroke, Pos2, Align2, FontId, Rect, Rounding, TextEdit};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use std::collections::HashMap;
@@ -9,7 +15,7 @@ use crate::agent_memory::{AgentMemory, CognitiveBehavior, EmotionalState};
 use crate::agent_personality::*;
 use crate::ai_client::{OllamaClient, ChatMessage, SttClient, MarketDataClient, Quote};
 
-const HOVER_PURPLE: Color32 = Color32::from_rgba_premultiplied(167, 139, 250, 40);
+pub(crate) const HOVER_PURPLE: Color32 = Color32::from_rgba_premultiplied(167, 139, 250, 40);
 
 #[derive(Default, PartialEq, Clone, Debug)]
 pub enum View { #[default] Hud, Trading, Conversations }
@@ -1469,40 +1475,3 @@ impl App {
     }
 }
 
-fn which_exists(name: &str) -> bool {
-    std::env::var("PATH").map(|path| {
-        path.split(':').any(|dir| {
-            let full = format!("{}/{}", dir, name);
-            std::fs::metadata(&full).is_ok()
-        })
-    }).unwrap_or(false)
-}
-
-fn btn(ui: &mut egui::Ui, text: impl Into<egui::RichText>) -> egui::Response {
-    btn_fill(ui, text, Color32::TRANSPARENT, HOVER_PURPLE)
-}
-
-fn btn_rounded(ui: &mut egui::Ui, text: impl Into<egui::RichText>, rounding: Rounding, min_size: Vec2) -> egui::Response {
-    let text: egui::RichText = text.into();
-    let id = ui.next_auto_id();
-    let prev_hovered = ui.data(|d| d.get_temp::<bool>(id)).unwrap_or(false);
-    let bg = if prev_hovered { HOVER_PURPLE } else { Color32::TRANSPARENT };
-    let resp = ui.add(egui::Button::new(text).fill(bg).rounding(rounding).min_size(min_size));
-    ui.data_mut(|d| d.insert_temp(id, resp.hovered()));
-    resp
-}
-
-fn btn_fill(ui: &mut egui::Ui, text: impl Into<egui::RichText>, normal: Color32, hover: Color32) -> egui::Response {
-    let text: egui::RichText = text.into();
-    let id = ui.next_auto_id();
-    let prev_hovered = ui.data(|d| d.get_temp::<bool>(id)).unwrap_or(false);
-    let bg = if prev_hovered { hover } else { normal };
-    let resp = ui.add(egui::Button::new(text).fill(bg));
-    ui.data_mut(|d| d.insert_temp(id, resp.hovered()));
-    resp
-}
-
-fn scroll_area() -> egui::ScrollArea {
-    egui::ScrollArea::vertical()
-        .scroll_bar_visibility(ScrollBarVisibility::VisibleWhenNeeded)
-}
