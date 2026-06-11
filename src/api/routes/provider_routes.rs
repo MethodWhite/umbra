@@ -43,15 +43,10 @@ pub async fn get(
             let base_url = provider_config.get("base_url")
                 .and_then(|v| v.as_str())
                 .unwrap_or(p.base_url);
-            let api_key_configured = provider_config.get("api_key")
-                .and_then(|v| v.as_str())
-                .unwrap_or("")
-                != "";
             Json(serde_json::json!({
                 "id": p.id,
                 "name": p.name,
                 "base_url": base_url,
-                "api_key_configured": api_key_configured,
                 "models": p.models,
             })).into_response()
         }

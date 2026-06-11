@@ -9,6 +9,7 @@ use axum::{
 };
 use std::path::PathBuf;
 use std::sync::Arc;
+use rand::Rng;
 use tower_http::cors::{CorsLayer, AllowOrigin};
 
 use crate::learning::AgentEngine;
@@ -34,15 +35,17 @@ fn load_auth_token() -> String {
             if !t.is_empty() { return t; }
         }
     }
-    tracing::warn!("No auth token found — generating ephemeral token");
-    use std::fmt::Write;
-    let mut token = String::with_capacity(64);
-    let since_epoch = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap_or_default();
-    for byte in since_epoch.as_nanos().to_ne_bytes() {
-        write!(&mut token, "{:02x}", byte).ok();
+    tracing::warn!("No auth token found — generating cryptographically random token");
+    let token: String = (0..32)
+        .map(|_| {
+            let idx = rand::thread_rng().gen_range(0..16);
+            format!("{:x}", idx)
+        })
+        .collect();
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).ok();
     }
+    std::fs::write(&path, &token).ok();
     token
 }
 

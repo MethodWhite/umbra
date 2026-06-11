@@ -15,15 +15,24 @@ use zeroize::Zeroize;
 
 const ITERATIONS: u32 = 600_000;
 
-fn mlock_memory(ptr: *const u8, len: usize) {
-    unsafe {
-        if libc::mlock(ptr as *const libc::c_void, len) != 0 {
-            tracing::warn!("mlock failed: {}", std::io::Error::last_os_error());
-        }
+fn mlock_memory(ptr: *const u8, len: usize) -> bool {
+    if ptr.is_null() || len == 0 {
+        return false;
+    }
+    let ret = unsafe { libc::mlock(ptr as *const libc::c_void, len) };
+    if ret != 0 {
+        let err = std::io::Error::last_os_error();
+        tracing::warn!("mlock failed ({}): {} — key material may be swapped to disk", ret, err);
+        false
+    } else {
+        true
     }
 }
 
 fn munlock_memory(ptr: *const u8, len: usize) {
+    if ptr.is_null() || len == 0 {
+        return;
+    }
     unsafe {
         libc::munlock(ptr as *const libc::c_void, len);
     }

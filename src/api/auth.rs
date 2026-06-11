@@ -22,7 +22,6 @@ pub async fn session(
     );
     let body = serde_json::json!({
         "status": "authenticated",
-        "token": token,
     });
     let body_str = serde_json::to_string(&body).unwrap_or_default();
     let cookie_header = HeaderValue::from_str(&cookie).unwrap_or_else(|_| {

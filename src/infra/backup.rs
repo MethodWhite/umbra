@@ -65,9 +65,22 @@ impl BackupEngine {
     }
 
     pub fn restore_latest(&self, original: &str) -> std::io::Result<()> {
+        let dest = PathBuf::from(original);
+        let dest_canonical = dest.canonicalize().map_err(|e| {
+            std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("Invalid restore path: {e}"))
+        })?;
+        let backup_canonical = self.backup_dir.canonicalize().map_err(|e| {
+            std::io::Error::new(std::io::ErrorKind::Other, format!("Invalid backup dir: {e}"))
+        })?;
+        if !dest_canonical.starts_with(&backup_canonical) {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::PermissionDenied,
+                format!("Restore target '{}' is outside backup directory", dest_canonical.display()),
+            ));
+        }
         let backups = self.list_backups()?;
         if let Some(latest) = backups.first() {
-            std::fs::copy(latest, original)?;
+            std::fs::copy(latest, &dest_canonical)?;
         }
         Ok(())
     }

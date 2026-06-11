@@ -3,6 +3,7 @@ pub mod pqc;
 pub mod zt_gate;
 pub mod antibrick;
 pub mod audit;
+pub mod ssrf;
 
 pub use enforcer::RuntimeEnforcer;
 pub use pqc::CryptoEngine;

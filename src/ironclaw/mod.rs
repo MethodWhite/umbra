@@ -41,10 +41,13 @@ impl IronClaw {
                 max_input_len: MAX_INPUT_LENGTH,
                 max_output_len: MAX_OUTPUT_LENGTH,
                 max_iterations: 12,
-                blocked_actions: vec![
-                    "rm".into(), "sudo".into(), "shutdown".into(), "reboot".into(),
-                    "dd".into(), "mkfs".into(), "format".into(), ">".into(),
-                ],
+        blocked_actions: vec![
+            "/bin/rm".into(), "/usr/bin/rm".into(), "sudo".into(), "shutdown".into(), "reboot".into(),
+            "dd".into(), "mkfs".into(), "format".into(), ">".into(),
+            "rmdir".into(), "unlink".into(), "fdisk".into(), "parted".into(),
+            "pvcreate".into(), "vgcreate".into(), "lvcreate".into(),
+            "cryptsetup".into(), "flashrom".into(), "fastboot".into(), "heimdall".into(),
+        ],
             },
             stats: Arc::new(ClawStats {
                 total_actions: AtomicU64::new(0),
@@ -63,7 +66,13 @@ impl IronClaw {
             return Err(ClawBlock::RateLimit("Rate limit exceeded: maximum 30 actions per minute".into()));
         }
 
-        if self.constraints.blocked_actions.iter().any(|b| action.contains(b.as_str())) {
+        if self.constraints.blocked_actions.iter().any(|b| {
+            let pattern = b.as_str();
+            action == pattern
+                || action.starts_with(&format!("{} ", pattern))
+                || action.contains(&format!(" {} ", pattern))
+                || action.ends_with(&format!(" {}", pattern))
+        }) {
             self.stats.blocked_actions.fetch_add(1, Ordering::Relaxed);
             return Err(ClawBlock::ActionBlocked(format!("Action '{}' is in the blocklist", action)));
         }

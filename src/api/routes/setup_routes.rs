@@ -164,8 +164,10 @@ pub async fn set_mode(
         std::fs::create_dir_all(parent).ok();
     }
     let toml_str = toml::to_string_pretty(&config).unwrap_or_default();
-    std::fs::write(&path, &toml_str).ok();
-    std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600)).ok();
+    let tmp_path = path.with_extension("tmp");
+    std::fs::write(&tmp_path, &toml_str).ok();
+    std::fs::set_permissions(&tmp_path, std::fs::Permissions::from_mode(0o600)).ok();
+    std::fs::rename(&tmp_path, &path).ok();
 
     Json(serde_json::json!({"success": true, "mode": mode})).into_response()
 }

@@ -5,8 +5,42 @@ use axum::{
     Json,
     response::{IntoResponse, Response},
 };
+use std::collections::HashMap;
+use std::sync::Mutex;
+use std::time::Instant;
 
 use crate::api::FrontendRouterState;
+
+struct RateLimitState {
+    attempts: HashMap<String, Vec<Instant>>,
+}
+
+impl RateLimitState {
+    fn new() -> Self {
+        Self { attempts: HashMap::new() }
+    }
+
+    fn check(&mut self, key: &str, max_attempts: u32, window_secs: u64) -> bool {
+        let now = Instant::now();
+        let cutoff = now - std::time::Duration::from_secs(window_secs);
+
+        let attempts = self.attempts.entry(key.to_string()).or_default();
+        attempts.retain(|&t| t > cutoff);
+
+        if attempts.len() >= max_attempts as usize {
+            false
+        } else {
+            attempts.push(now);
+            true
+        }
+    }
+}
+
+static RATE_LIMITER: Mutex<RateLimitState> = Mutex::new(RateLimitState::new());
+
+fn check_rate_limit(ip: &str) -> bool {
+    RATE_LIMITER.lock().unwrap_or_else(|e| e.into_inner()).check(ip, 10, 60)
+}
 
 pub async fn auth_middleware(
     headers: HeaderMap,
@@ -14,6 +48,15 @@ pub async fn auth_middleware(
     request: Request,
     next: Next,
 ) -> Response {
+    let client_ip = headers
+        .get("x-forwarded-for")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("unknown");
+
+    if !check_rate_limit(client_ip) {
+        return (StatusCode::TOO_MANY_REQUESTS, Json(serde_json::json!({"error": "Rate limit exceeded"}))).into_response();
+    }
+
     let key = headers
         .get("x-umbra-key")
         .and_then(|v| v.to_str().ok())
@@ -30,6 +73,15 @@ pub async fn frontend_auth_middleware(
     request: Request,
     next: Next,
 ) -> Response {
+    let client_ip = headers
+        .get("x-forwarded-for")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("unknown");
+
+    if !check_rate_limit(client_ip) {
+        return (StatusCode::TOO_MANY_REQUESTS, Json(serde_json::json!({"error": "Rate limit exceeded"}))).into_response();
+    }
+
     let key = headers
         .get("x-umbra-key")
         .and_then(|v| v.to_str().ok())

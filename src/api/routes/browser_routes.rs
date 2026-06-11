@@ -36,7 +36,16 @@ pub struct SettingsBody {
     pub human_mode: Option<bool>,
 }
 
+fn check_url_safe(url: &str) -> Result<(), String> {
+    if let Some(msg) = crate::security::ssrf::check_ssrf(url) {
+        return Err(format!("SSRF blocked: {msg}"));
+    }
+    Ok(())
+}
+
 async fn fetch_url(url: &str, extract: bool) -> Result<serde_json::Value, String> {
+    check_url_safe(url)?;
+
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(15))
         .build()

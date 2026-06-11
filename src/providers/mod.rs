@@ -202,16 +202,6 @@ impl ProviderRegistry {
         if let Ok(key) = std::env::var(&env_key) {
             if !key.is_empty() { return Some(key); }
         }
-        let url = format!("http://127.0.0.1:8340/api/internal/key/{}", provider_id);
-        if let Ok(resp) = reqwest::blocking::get(&url) {
-            if resp.status().is_success() {
-                if let Ok(json) = resp.json::<serde_json::Value>() {
-                    if let Some(key) = json.get("key").and_then(|v| v.as_str()) {
-                        if !key.is_empty() { return Some(key.to_string()); }
-                    }
-                }
-            }
-        }
         self.providers.get(provider_id).map(|p| p.api_key.clone())
             .filter(|k| !k.is_empty())
     }

@@ -64,6 +64,7 @@ base64 = "=0.22.1"
 # Engine
 wasmtime = "=43.0.2"
 toml = "=0.8.23"
+url = "=2.5.4"
 
 # Security
 sha2 = "=0.10.9"

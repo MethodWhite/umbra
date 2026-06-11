@@ -1,5 +1,7 @@
 use anyhow::Result;
-use wasmtime::{Engine, Linker, Module, Store};
+use wasmtime::{Config, Engine, Linker, Module, Store};
+
+const MAX_WASM_SIZE: usize = 1_048_576;
 
 pub struct WasmSandbox {
     engine: Engine,
@@ -7,14 +9,25 @@ pub struct WasmSandbox {
 
 impl WasmSandbox {
     pub fn new() -> Self {
-        Self {
-            engine: Engine::default(),
-        }
+        let mut config = Config::default();
+        config.wasm_reference_types(false);
+        config.wasm_simd(false);
+        config.wasm_bulk_memory(false);
+        config.wasm_multi_value(false);
+        let engine = Engine::new(&config).unwrap_or_else(|_| Engine::default());
+        Self { engine }
     }
 
     pub fn execute(&self, code: &[u8]) -> Result<String> {
         if code.is_empty() {
             anyhow::bail!("WASM: no module provided (empty bytecode)");
+        }
+        if code.len() > MAX_WASM_SIZE {
+            anyhow::bail!(
+                "WASM: bytecode too large ({} bytes, max {})",
+                code.len(),
+                MAX_WASM_SIZE
+            );
         }
 
         let module = Module::new(&self.engine, code)
@@ -27,13 +40,16 @@ impl WasmSandbox {
             module.exports().count()
         );
 
+        if module.imports().count() > 0 {
+            anyhow::bail!("WASM: module requires {} imports which are not allowed in sandbox", module.imports().count());
+        }
+
         let mut store = Store::new(&self.engine, ());
         let linker = Linker::new(&self.engine);
         let instance = linker
             .instantiate(&mut store, &module)
             .map_err(|e| anyhow::anyhow!("WASM instantiation failed: {}", e))?;
 
-        // Try to call main or _start export
         for name in &["main", "_start"] {
             if let Ok(func) = instance.get_typed_func::<(), ()>(&mut store, name) {
                 func.call(&mut store, ())
