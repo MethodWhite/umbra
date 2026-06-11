@@ -97,7 +97,8 @@ hyper = { version = "=1.10.1", features = ["server", "http1"] }
 hyper-util = { version = "=0.1.20", features = ["tokio", "server", "service"] }
 
 # Synapsis memory engine
-synapsis = { path = "../synapsis" }
+synapsis = { path = "../synapsis", optional = true }
+synapsis-core = { path = "../synapsis-core" }
 
 paste = { git = "https://github.com/MethodWhite/paste", tag = "v1.0.15-umbra" }
 

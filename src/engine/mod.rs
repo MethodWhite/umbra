@@ -28,7 +28,7 @@ use std::path::PathBuf;
 pub struct MateriaCore {
     pub jepa: JepaEngine,
     pub router: ModelRouter,
-    pub memory: synapsis::infrastructure::database::Database,
+    pub memory: synapsis_core::infrastructure::database::Database,
     pub scheduler: AdaptiveScheduler,
     pub wasm: WasmSandbox,
     pub snn: SnnClassifier,
@@ -40,7 +40,7 @@ pub struct MateriaCore {
 
 impl MateriaCore {
     pub async fn new(models_dir: PathBuf) -> Result<Self> {
-        let db = synapsis::infrastructure::database::Database::new();
+        let db = synapsis_core::infrastructure::database::Database::new();
         let mut models = ModelManager::new(models_dir);
         models.scan_local().await?;
 
