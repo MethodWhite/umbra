@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use crate::sphere::SphereRenderer;
 use crate::agent_memory::{AgentMemory, CognitiveBehavior, EmotionalState};
 use crate::agent_personality::*;
-use crate::infrastructure::http::ollama_client::{OllamaClient, ChatMessage};
+use crate::ai_client::{OllamaClient, ChatMessage};
 
 const HOVER_PURPLE: Color32 = Color32::from_rgba_premultiplied(167, 139, 250, 40);
 

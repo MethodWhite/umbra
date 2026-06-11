@@ -8,6 +8,14 @@ const DEFAULT_API_TYPE: &str = "openai";
 const ANTHROPIC_API_VERSION: &str = "2023-06-01";
 const OPENCODE_GO_ID: &str = "opencode-go";
 const OPENCODE_GO_BASE_URL: &str = "https://opencode.ai/zen/go/v1";
+const OPENCODE_GO_MODELS: &[&str] = &[
+    "glm-5.1", "glm-5",
+    "kimi-k2.6", "kimi-k2.5",
+    "deepseek-v4-pro", "deepseek-v4-flash",
+    "mimo-v2.5", "mimo-v2.5-pro",
+    "minimax-m3", "minimax-m2.7", "minimax-m2.5",
+    "qwen3.7-max", "qwen3.7-plus", "qwen3.6-plus",
+];
 const HTTP_TIMEOUT_SECONDS: u64 = 60;
 /// Internal vault port
 #[allow(dead_code)]
@@ -33,7 +41,7 @@ impl ModelProvider {
             api_type: DEFAULT_API_TYPE.into(),
             base_url: OPENCODE_GO_BASE_URL.into(),
             api_key,
-            models: crate::engine::scheduler::OPENCODE_GO_MODELS
+            models: OPENCODE_GO_MODELS
                 .iter()
                 .map(|s| s.to_string())
                 .collect(),

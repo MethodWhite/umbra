@@ -6,6 +6,11 @@ authors = ["methodwhite"]
 description = "UMBRA - AI Agent System for MT4 Automated Trading"
 license = "MIT"
 
+[features]
+default = ["desktop"]
+desktop = []
+server = []
+
 [lib]
 name = "umbra"
 path = "src/lib.rs"
@@ -13,6 +18,12 @@ path = "src/lib.rs"
 [[bin]]
 name = "umbra"
 path = "src/main.rs"
+required-features = ["server"]
+
+[[bin]]
+name = "umbra-gui"
+path = "src/bin/umbra-gui.rs"
+required-features = ["desktop"]
 
 [dependencies]
 image = { version = "0.25", default-features = false, features = ["png"] }
@@ -88,12 +99,6 @@ hyper-util = { version = "=0.1.20", features = ["tokio", "server", "service"] }
 # Synapsis memory engine
 synapsis = { path = "../synapsis" }
 
-[features]
-default = ["full"]
-full = []
-minimal = []
-
-[patch.crates-io]
 paste = { git = "https://github.com/MethodWhite/paste", tag = "v1.0.15-umbra" }
 
 [profile.release]

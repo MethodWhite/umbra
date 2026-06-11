@@ -88,7 +88,7 @@ checksum = "974e96c347384d9133427167fb8a58c340cb0496988dacceebdc1ed27071023b"
 dependencies = [
  "accesskit",
  "accesskit_consumer",
- "paste",
+ "paste 1.0.15 (registry+https://github.com/rust-lang/crates.io-index)",
  "static_assertions",
  "windows 0.58.0",
  "windows-core 0.58.0",
@@ -3445,7 +3445,7 @@ dependencies = [
  "foreign-types 0.5.0",
  "log",
  "objc",
- "paste",
+ "paste 1.0.15 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -4183,6 +4183,12 @@ dependencies = [
  "rand_core 0.6.4",
  "subtle",
 ]
+
+[[package]]
+name = "paste"
+version = "1.0.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
 name = "paste"
@@ -6172,6 +6178,7 @@ dependencies = [
  "hyper-util",
  "image",
  "libc",
+ "paste 1.0.15 (git+https://github.com/MethodWhite/paste?tag=v1.0.15-umbra)",
  "pbkdf2",
  "pem",
  "rand 0.8.6",

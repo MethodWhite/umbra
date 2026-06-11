@@ -1,48 +1,78 @@
 pub mod config;
 pub mod desktop;
-pub mod engine;
-pub mod providers;
-pub mod security;
-pub mod learning;
-pub mod bridge;
-pub mod infra;
-pub mod persona;
-pub mod jarvis;
-pub mod ironclaw;
-pub mod api;
-pub mod memory;
-pub mod audio;
-pub mod sub_agents;
-pub mod resource;
-pub mod debugger;
-pub mod rate_limiter;
-pub mod vault;
-pub mod frontend;
+pub mod sphere;
 pub mod agent_memory;
 pub mod agent_personality;
-pub mod cache;
+pub mod vault;
+pub mod memory;
+pub mod providers;
+pub mod audio;
+pub mod rate_limiter;
 pub mod job_queue;
+pub mod security;
+pub mod ai_client;
 
-// NEW ARCHITECTURE LAYERS
-pub mod domain;
-pub mod application;
+// Server-only: CLI API server
+#[cfg(feature = "server")]
 pub mod infrastructure;
+#[cfg(feature = "server")]
+pub mod engine;
+#[cfg(feature = "server")]
+pub mod bridge;
+#[cfg(feature = "server")]
+pub mod infra;
+#[cfg(feature = "server")]
+pub mod persona;
+#[cfg(feature = "server")]
+pub mod jarvis;
+#[cfg(feature = "server")]
+pub mod ironclaw;
+#[cfg(feature = "server")]
+pub mod api;
+#[cfg(feature = "server")]
+pub mod learning;
+#[cfg(feature = "server")]
+pub mod sub_agents;
+#[cfg(feature = "server")]
+pub mod resource;
+#[cfg(feature = "server")]
+pub mod debugger;
+#[cfg(feature = "server")]
+pub mod frontend;
+#[cfg(feature = "server")]
+pub mod cache;
+#[cfg(feature = "server")]
+pub mod domain;
+#[cfg(feature = "server")]
+pub mod application;
 
+#[cfg(feature = "server")]
 pub use config::UmbraConfig;
+#[cfg(feature = "server")]
 pub use engine::MateriaCore;
+#[cfg(feature = "server")]
 pub use security::SecurityGate;
+#[cfg(feature = "server")]
 pub use learning::{AgentEngine, UmbraAgent, AgentEvent, trainer::{TrainingExample, TrainReport}};
+#[cfg(feature = "server")]
 pub use bridge::Mt4Bridge;
+#[cfg(feature = "server")]
 pub use persona::JarvisPersona;
+#[cfg(feature = "server")]
 pub use jarvis::{JarvisManager, bridge::JarvisApi};
+#[cfg(feature = "server")]
 pub use ironclaw::IronClaw;
+#[cfg(feature = "server")]
 pub use memory::MemoryEngine;
+#[cfg(feature = "server")]
 pub use audio::AudioEngine;
+#[cfg(feature = "server")]
 pub use sub_agents::SubAgentManager;
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const NAME: &str = "UMBRA";
 
+#[cfg(feature = "server")]
 pub async fn init() -> anyhow::Result<UmbraApp> {
     tracing::info!("{} v{} inicializando", NAME, VERSION);
 
@@ -99,6 +129,7 @@ pub async fn init() -> anyhow::Result<UmbraApp> {
     Ok(UmbraApp { config, engine, security, ironclaw, memory, agent, jarvis, audio, sub_agents, resource_manager, debugger, providers, infra })
 }
 
+#[cfg(feature = "server")]
 pub struct UmbraApp {
     pub config: UmbraConfig,
     pub engine: std::sync::Arc<MateriaCore>,
@@ -114,4 +145,3 @@ pub struct UmbraApp {
     pub providers: providers::ProviderRegistry,
     pub infra: crate::infra::Infrastructure,
 }
-pub mod sphere;
