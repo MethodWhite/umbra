@@ -5,8 +5,8 @@ use crate::engine::MateriaCore;
 use crate::engine::SynapsisMemory;
 use crate::security::SecurityGate;
 use crate::persona::JarvisPersona;
-use crate::memory::MemoryEngine;
-use synapsis::ObservationType;
+use crate::memory::{MemoryEngine, MemoryEntry};
+use crate::agent_memory::EmotionalState;
 
 #[derive(Debug, Clone)]
 pub enum AgentEvent {
@@ -58,11 +58,14 @@ impl UmbraAgent {
             format!("[Umbra] {} — Analizando solicitud", self.persona.greeting)
         )).await;
 
-        let memory_context = self.memory.get_context(&input).await.unwrap_or_default();
+        let memory_context = self.memory.get_context(&input, Some(&EmotionalState::analytical())).unwrap_or_default();
 
-        let synapsis_context = self.synapsis.recall(&input).await.unwrap_or_default();
-        let combined_context = if !synapsis_context.is_empty() {
-            format!("{}\n## Synapsis Memory\n{}\n", memory_context, synapsis_context.join("\n"))
+        let synapsis_entries = self.synapsis.recall(&input, None).await.unwrap_or_default();
+        let combined_context = if !synapsis_entries.is_empty() {
+            let ctx: Vec<String> = synapsis_entries.iter().map(|e| {
+                format!("[{}] {} (emotion: {}, personality: {})", e.agent_id, e.content(), e.emotion.label, e.agent_personality)
+            }).collect();
+            format!("{}\n## Synapsis Memory\n{}\n", memory_context, ctx.join("\n"))
         } else {
             memory_context.clone()
         };
@@ -117,7 +120,7 @@ impl UmbraAgent {
                 let _ = tx.send(AgentEvent::Status("[Umbra] ✅ Objetivo completado".into())).await;
                 // 5. LEARN: registrar experiencia en Synapsis
                 self.learn(&input, &final_response).await?;
-                self.synapsis.save(&input, &final_response).await?;
+                self.synapsis.save(&input, &final_response, &EmotionalState::analytical()).await?;
                 break;
             }
         }
@@ -190,23 +193,14 @@ impl UmbraAgent {
     }
 
     async fn learn(&self, input: &str, response: &str) -> Result<()> {
-        let title = if input.len() > 60 {
-            format!("{}...", &input[..60])
-        } else {
-            input.to_string()
-        };
-
+        let title = format!("Agent Loop: {}", &input[..input.len().min(60)]);
         let content = format!(
             "Pregunta: {}\nRespuesta: {}",
             input,
             if response.len() > 500 { &response[..500] } else { response }
         );
 
-        match self.memory.add_observation(
-            ObservationType::Learning,
-            title,
-            content,
-        ).await {
+        match self.memory.save("umbra-agent", &title, &content, &EmotionalState::analytical(), "analytical") {
             Ok(_) => {
                 tracing::debug!("[Synapsis] Experiencia registrada en memoria persistente");
             }

@@ -388,7 +388,7 @@ async fn get_status(
     State(state): State<BackendRouterState>,
 ) -> impl IntoResponse {
     let uptime = state.start_time.elapsed().as_secs();
-    let (obs_count, sess_count) = state.memory.stats().await;
+    let (obs_count, sess_count) = state.memory.stats();
     let hw = crate::engine::safety::HardwareMonitor::sample().await;
     Json(StatusResponse {
         mode: if hw.is_throttling { "limitado".into() } else { "activo".into() },
@@ -491,12 +491,12 @@ async fn search_memory(
     State(state): State<BackendRouterState>,
     Json(req): Json<MemorySearchRequest>,
 ) -> impl IntoResponse {
-    match state.memory.search(&req.query, req.limit.unwrap_or(10)).await {
-        Ok(observations) => {
+    match state.memory.search(&req.query, None) {
+        Ok(entries) => {
             Json(serde_json::json!({
                 "status": "ok",
-                "count": observations.len(),
-                "observations": observations,
+                "count": entries.len(),
+                "entries": entries,
             }))
         }
         Err(e) => {
@@ -511,12 +511,12 @@ async fn search_memory(
 async fn recent_memory(
     State(state): State<BackendRouterState>,
 ) -> impl IntoResponse {
-    match state.memory.get_recent(20).await {
-        Ok(observations) => {
+    match state.memory.recent(20) {
+        Ok(entries) => {
             Json(serde_json::json!({
                 "status": "ok",
-                "count": observations.len(),
-                "observations": observations,
+                "count": entries.len(),
+                "entries": entries,
             }))
         }
         Err(e) => {

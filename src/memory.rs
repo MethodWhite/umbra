@@ -1,191 +1,174 @@
 use anyhow::Result;
+use serde::Serialize;
 use std::sync::Arc;
-use synapsis::{
-    Observation, ObservationType, SessionId,
-    Timestamp,
-};
-use tokio::sync::RwLock;
+use std::sync::RwLock;
+use std::time::{SystemTime, UNIX_EPOCH};
+use crate::agent_memory::EmotionalState;
 
-#[derive(Debug, Clone)]
-pub struct Session {
-    pub id: SessionId,
-    pub project: String,
-    pub cwd: String,
-    pub started_at: Timestamp,
-    pub ended_at: Option<Timestamp>,
-    pub observation_count: i64,
+pub type MemoryId = u64;
+
+#[derive(Debug, Clone, Serialize)]
+pub struct MemoryEntry {
+    pub id: MemoryId,
+    pub agent_id: String,
+    pub session_id: String,
+    pub prompt: String,
+    pub response: String,
+    pub emotion: EmotionalState,
+    pub agent_personality: String,
+    pub tags: Vec<String>,
+    pub created_at: u64,
 }
 
-impl Session {
-    pub fn new(id: SessionId, project: String, cwd: String) -> Self {
-        Self {
-            id,
-            project,
-            cwd,
-            started_at: Timestamp::now(),
-            ended_at: None,
-            observation_count: 0,
-        }
+impl MemoryEntry {
+    pub fn content(&self) -> String {
+        format!("Q: {}\nA: {}", self.prompt, self.response)
+    }
+}
+
+pub trait MemoryRepository: Send + Sync {
+    fn save(&self, entry: MemoryEntry) -> Result<()>;
+    fn search(&self, query: &str, emotion: Option<&EmotionalState>, limit: usize) -> Result<Vec<MemoryEntry>>;
+    fn recall_by_agent(&self, agent_id: &str, limit: usize) -> Result<Vec<MemoryEntry>>;
+    fn recent(&self, limit: usize) -> Result<Vec<MemoryEntry>>;
+    fn count(&self) -> usize;
+    fn delete(&self, id: MemoryId) -> Result<()>;
+}
+
+fn now_secs() -> u64 {
+    SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs()
+}
+
+fn text_relevance(query: &str, text: &str) -> f64 {
+    let q = query.to_lowercase();
+    let t = text.to_lowercase();
+    let mut score = 0.0;
+    if t.contains(&q) { score += 10.0; }
+    if t.starts_with(&q) { score += 5.0; }
+    for word in q.split_whitespace() {
+        score += t.matches(word).count() as f64;
+    }
+    score
+}
+
+fn emotional_similarity(a: &EmotionalState, b: &EmotionalState) -> f64 {
+    let val = 1.0_f64 - (a.valence - b.valence).abs() as f64;
+    let aro = 1.0_f64 - (a.arousal - b.arousal).abs() as f64;
+    val * 0.5 + aro * 0.3 + if a.primary == b.primary { 0.2 } else { 0.0 }
+}
+
+pub struct InMemoryMemoryStore {
+    entries: RwLock<Vec<MemoryEntry>>,
+    next_id: RwLock<MemoryId>,
+}
+
+impl InMemoryMemoryStore {
+    pub fn new() -> Self {
+        Self { entries: RwLock::new(Vec::new()), next_id: RwLock::new(1) }
+    }
+}
+
+impl MemoryRepository for InMemoryMemoryStore {
+    fn save(&self, mut entry: MemoryEntry) -> Result<()> {
+        let mut id = self.next_id.write().unwrap();
+        entry.id = *id;
+        entry.created_at = now_secs();
+        self.entries.write().unwrap().push(entry);
+        *id += 1;
+        Ok(())
+    }
+
+    fn search(&self, query: &str, emotion: Option<&EmotionalState>, limit: usize) -> Result<Vec<MemoryEntry>> {
+        let entries = self.entries.read().unwrap();
+        let mut scored: Vec<(f64, MemoryEntry)> = entries.iter().map(|e| {
+            let text_score = text_relevance(query, &e.content());
+            let emotion_score = emotion.map(|em| emotional_similarity(em, &e.emotion)).unwrap_or(0.0);
+            (text_score * 0.7 + emotion_score * 0.3, e.clone())
+        }).filter(|(s, _)| *s > 0.0).collect();
+        scored.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
+        Ok(scored.into_iter().take(limit).map(|(_, e)| e).collect())
+    }
+
+    fn recall_by_agent(&self, agent_id: &str, limit: usize) -> Result<Vec<MemoryEntry>> {
+        let mut results: Vec<MemoryEntry> = self.entries.read().unwrap().iter()
+            .filter(|e| e.agent_id == agent_id).cloned().collect();
+        results.sort_by(|a, b| b.created_at.cmp(&a.created_at));
+        results.truncate(limit);
+        Ok(results)
+    }
+
+    fn recent(&self, limit: usize) -> Result<Vec<MemoryEntry>> {
+        let mut entries = self.entries.read().unwrap().clone();
+        entries.sort_by(|a, b| b.created_at.cmp(&a.created_at));
+        entries.truncate(limit);
+        Ok(entries)
+    }
+
+    fn count(&self) -> usize {
+        self.entries.read().unwrap().len()
+    }
+
+    fn delete(&self, id: MemoryId) -> Result<()> {
+        self.entries.write().unwrap().retain(|e| e.id != id);
+        Ok(())
     }
 }
 
 pub struct MemoryEngine {
-    observations: Arc<RwLock<Vec<Observation>>>,
-    sessions: Arc<RwLock<Vec<Session>>>,
-    current_session: Arc<RwLock<Option<Session>>>,
+    repo: Arc<dyn MemoryRepository>,
 }
 
 impl MemoryEngine {
     pub fn new() -> Self {
-        Self {
-            observations: Arc::new(RwLock::new(Vec::new())),
-            sessions: Arc::new(RwLock::new(Vec::new())),
-            current_session: Arc::new(RwLock::new(None)),
-        }
+        Self { repo: Arc::new(InMemoryMemoryStore::new()) }
     }
 
-    pub async fn start_session(&self, project: &str) -> Result<SessionId> {
-        let session_id = SessionId::new(&uuid::Uuid::new_v4().to_string());
-        let session = Session::new(
-            session_id.clone(),
-            project.to_string(),
-            std::env::current_dir()
-                .unwrap_or_default()
-                .to_string_lossy()
-                .to_string(),
-        );
-
-        let mut sessions = self.sessions.write().await;
-        sessions.push(session.clone());
-
-        let mut current = self.current_session.write().await;
-        *current = Some(session);
-
-        Ok(session_id)
+    pub fn with_repository(repo: Arc<dyn MemoryRepository>) -> Self {
+        Self { repo }
     }
 
-    pub async fn end_session(&self) -> Result<()> {
-        let mut current = self.current_session.write().await;
-        if let Some(mut session) = current.take() {
-            session.ended_at = Some(Timestamp::now());
-            let mut sessions = self.sessions.write().await;
-            if let Some(s) = sessions.iter_mut().find(|s| s.id == session.id) {
-                s.ended_at = session.ended_at;
-            }
-        }
-        Ok(())
-    }
-
-    pub async fn add_observation(
-        &self,
-        obs_type: ObservationType,
-        title: String,
-        content: String,
-    ) -> Result<Observation> {
-        let session_id = {
-            let current = self.current_session.read().await;
-            current
-                .as_ref()
-                .map(|s| s.id.clone())
-                .unwrap_or_else(|| SessionId::new(&uuid::Uuid::new_v4().to_string()))
+    pub fn save(&self, agent_id: &str, prompt: &str, response: &str, emotion: &EmotionalState, personality: &str) -> Result<MemoryEntry> {
+        let entry = MemoryEntry {
+            id: 0, agent_id: agent_id.to_string(), session_id: String::new(),
+            prompt: prompt.to_string(), response: response.to_string(),
+            emotion: emotion.clone(), agent_personality: personality.to_string(),
+            tags: vec![], created_at: 0,
         };
+        self.repo.save(entry.clone())?;
+        Ok(entry)
+    }
 
-        let observation = Observation::new(session_id, obs_type, title, content);
+    pub fn search(&self, query: &str, emotion: Option<&EmotionalState>) -> Result<Vec<MemoryEntry>> {
+        self.repo.search(query, emotion, 5)
+    }
 
-        let mut observations = self.observations.write().await;
-        observations.push(observation.clone());
+    pub fn recent(&self, limit: usize) -> Result<Vec<MemoryEntry>> {
+        self.repo.recent(limit)
+    }
 
-        let mut sessions = self.sessions.write().await;
-        if let Some(session) = sessions.iter_mut().find(|s| s.id.as_str() == observation.session_id) {
-            session.observation_count += 1;
+    pub fn recall_by_agent(&self, agent_id: &str, limit: usize) -> Result<Vec<MemoryEntry>> {
+        self.repo.recall_by_agent(agent_id, limit)
+    }
+
+    pub fn get_context(&self, query: &str, emotion: Option<&EmotionalState>) -> Result<String> {
+        let entries = self.repo.search(query, emotion, 5)?;
+        if entries.is_empty() {
+            return Ok(String::new());
         }
-
-        Ok(observation)
-    }
-
-    pub async fn search(&self, query: &str, limit: usize) -> Result<Vec<Observation>> {
-        let observations = self.observations.read().await;
-        let query_lower = query.to_lowercase();
-
-        let mut results: Vec<(Observation, f64)> = observations
-            .iter()
-            .filter(|_obs| true)
-            .filter_map(|obs| {
-                let mut score = 0.0;
-                let title_lower = obs.title.to_lowercase();
-                let content_lower = obs.content.to_lowercase();
-
-                if title_lower.contains(&query_lower) {
-                    score += 10.0;
-                }
-                if content_lower.contains(&query_lower) {
-                    score += 5.0;
-                }
-
-                for word in query_lower.split_whitespace() {
-                    if title_lower.contains(word) {
-                        score += 2.0;
-                    }
-                    if content_lower.contains(word) {
-                        score += 1.0;
-                    }
-                }
-
-                if score > 0.0 {
-                    Some((obs.clone(), score))
-                } else {
-                    None
-                }
-            })
-            .collect();
-
-        results.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
-        results.truncate(limit);
-
-        Ok(results.into_iter().map(|(obs, _)| obs).collect())
-    }
-
-    pub async fn get_recent(&self, limit: usize) -> Result<Vec<Observation>> {
-        let observations = self.observations.read().await;
-        let mut recent: Vec<Observation> = observations
-            .iter()
-            .filter(|_obs| true)
-            .cloned()
-            .collect();
-
-        recent.sort_by(|a, b| b.created_at.cmp(&a.created_at));
-        recent.truncate(limit);
-
-        Ok(recent)
-    }
-
-    pub async fn get_context(&self, query: &str) -> Result<String> {
-        let relevant = self.search(query, 5).await?;
-        let recent = self.get_recent(3).await?;
-
-        let mut context = String::new();
-
-        if !relevant.is_empty() {
-            context.push_str("## Memorias Relevantes\n");
-            for obs in relevant {
-                context.push_str(&format!("- **{}**: {}\n", obs.title, obs.content));
-            }
-            context.push('\n');
+        let mut ctx = String::from("## Emotional Memory Context\n");
+        for e in &entries {
+            ctx.push_str(&format!("- [{}] {} (emotion: {}, personality: {})\n",
+                e.agent_id, e.content(), e.emotion.label, e.agent_personality));
         }
-
-        if !recent.is_empty() {
-            context.push_str("## Memorias Recientes\n");
-            for obs in recent {
-                context.push_str(&format!("- **{}**: {}\n", obs.title, obs.content));
-            }
-        }
-
-        Ok(context)
+        Ok(ctx)
     }
 
-    pub async fn stats(&self) -> (usize, usize) {
-        let observations = self.observations.read().await;
-        let sessions = self.sessions.read().await;
-        (observations.len(), sessions.len())
+    pub fn stats(&self) -> (usize, usize) {
+        let total = self.repo.count();
+        let entries = self.repo.recent(1000).unwrap_or_default();
+        let mut agents: Vec<String> = entries.into_iter().map(|e| e.agent_id).collect();
+        agents.sort();
+        agents.dedup();
+        (total, agents.len())
     }
 }
