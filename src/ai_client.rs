@@ -194,3 +194,99 @@ impl SttClient {
         }
     }
 }
+
+// ── Market Data Client ───────────────────────────────────────────────────────
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Quote {
+    pub symbol: String,
+    pub bid: f64,
+    pub ask: f64,
+    pub spread: f64,
+    pub timestamp: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Position {
+    pub symbol: String,
+    pub volume: f64,
+    pub open_price: f64,
+    pub current_price: f64,
+    pub profit: f64,
+    pub direction: String, // "buy" or "sell"
+}
+
+pub struct MarketDataClient {
+    base_url: String,
+    api_key: Option<String>,
+    client: reqwest::Client,
+}
+
+impl MarketDataClient {
+    pub fn new_simulated() -> Self {
+        Self {
+            base_url: String::new(),
+            api_key: None,
+            client: reqwest::Client::new(),
+        }
+    }
+
+    pub fn new_twelve_data(api_key: String) -> Self {
+        Self {
+            base_url: "https://api.twelvedata.com".into(),
+            api_key: Some(api_key),
+            client: reqwest::Client::builder()
+                .timeout(std::time::Duration::from_secs(10))
+                .build().expect("Failed to build HTTP client"),
+        }
+    }
+
+    /// Fetch a real-time quote. Falls back to simulated data if no API key.
+    pub async fn quote(&self, symbol: &str) -> Result<Quote, AiError> {
+        if let Some(key) = &self.api_key {
+            self.quote_api(symbol, key).await
+        } else {
+            Ok(self.quote_simulated(symbol))
+        }
+    }
+
+    fn quote_simulated(&self, symbol: &str) -> Quote {
+        let base = match symbol {
+            "EURUSD" => 1.0850, "GBPUSD" => 1.2650, "BTCUSD" => 67000.0,
+            "XAUUSD" => 2350.0, "SP500" => 5300.0, _ => 100.0,
+        };
+        let offset = (std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH).unwrap_or_default()
+            .as_secs() % 100) as f64 / 100.0 * base * 0.002 - base * 0.001;
+        Quote {
+            symbol: symbol.to_string(),
+            bid: base + offset,
+            ask: base + offset + 0.0002,
+            spread: 0.0002,
+            timestamp: std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs(),
+        }
+    }
+
+    async fn quote_api(&self, symbol: &str, api_key: &str) -> Result<Quote, AiError> {
+        let resp = self.client
+            .get(format!("{}/price?symbol={}&apikey={}", self.base_url, symbol, api_key))
+            .send().await
+            .map_err(|e| AiError::Request(format!("Market data failed: {}", e)))?;
+
+        if resp.status() == 200 {
+            #[derive(Deserialize)]
+            struct ApiPrice { price: Option<String> }
+            let data = resp.json::<ApiPrice>().await
+                .map_err(|e| AiError::Parse(format!("Market data parse failed: {}", e)))?;
+            let price: f64 = data.price.and_then(|p| p.parse().ok()).unwrap_or(0.0);
+            Ok(Quote {
+                symbol: symbol.to_string(), bid: price * 0.9999, ask: price * 1.0001,
+                spread: price * 0.0002, timestamp: std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs(),
+            })
+        } else {
+            Err(AiError::Http(resp.status().as_u16(), resp.text().await.unwrap_or_default()))
+        }
+    }
+}

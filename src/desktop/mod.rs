@@ -1,3 +1,4 @@
+// Zone 1 — Desktop GUI
 #![allow(deprecated)]
 use eframe::egui::{self, Color32, Vec2, RichText, Button, Stroke, Pos2, Align2, FontId, Rect, Rounding, TextEdit, scroll_area::ScrollBarVisibility};
 use std::sync::{Arc, Mutex};
@@ -6,7 +7,7 @@ use std::collections::HashMap;
 use crate::sphere::SphereRenderer;
 use crate::agent_memory::{AgentMemory, CognitiveBehavior, EmotionalState};
 use crate::agent_personality::*;
-use crate::ai_client::{OllamaClient, ChatMessage, SttClient};
+use crate::ai_client::{OllamaClient, ChatMessage, SttClient, MarketDataClient, Quote};
 
 const HOVER_PURPLE: Color32 = Color32::from_rgba_premultiplied(167, 139, 250, 40);
 
@@ -81,6 +82,8 @@ pub struct App {
     inference_result: Arc<Mutex<Option<(usize, String)>>>,
     stt: Option<SttClient>,
     stt_result: Arc<Mutex<Option<String>>>,
+    market: MarketDataClient,
+    quotes: std::collections::HashMap<String, Quote>,
 }
 
 const TRADING_FILTERS: &[&str] = &["All", "Forex", "Crypto", "Commodities", "Indices"];
@@ -176,6 +179,8 @@ impl Default for App {
             inference_result: Arc::new(Mutex::new(None)),
             stt: None,
             stt_result: Arc::new(Mutex::new(None)),
+            market: MarketDataClient::new_simulated(),
+            quotes: HashMap::new(),
         };
         app.detect_local_models();
         app
