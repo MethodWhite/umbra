@@ -6,6 +6,7 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use std::collections::HashMap;
+use std::sync::LazyLock;
 use std::sync::Mutex;
 use std::time::Instant;
 
@@ -36,7 +37,7 @@ impl RateLimitState {
     }
 }
 
-static RATE_LIMITER: Mutex<RateLimitState> = Mutex::new(RateLimitState::new());
+static RATE_LIMITER: LazyLock<Mutex<RateLimitState>> = LazyLock::new(|| Mutex::new(RateLimitState::new()));
 
 fn check_rate_limit(ip: &str) -> bool {
     RATE_LIMITER.lock().unwrap_or_else(|e| e.into_inner()).check(ip, 10, 60)

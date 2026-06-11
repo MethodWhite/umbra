@@ -1,9 +1,33 @@
 use anyhow::Result;
 use std::sync::Arc;
 use synapsis::{
-    Observation, ObservationType, Session, SessionId,
+    Observation, ObservationType, SessionId,
+    Timestamp,
 };
 use tokio::sync::RwLock;
+
+#[derive(Debug, Clone)]
+pub struct Session {
+    pub id: SessionId,
+    pub project: String,
+    pub cwd: String,
+    pub started_at: Timestamp,
+    pub ended_at: Option<Timestamp>,
+    pub observation_count: i64,
+}
+
+impl Session {
+    pub fn new(id: SessionId, project: String, cwd: String) -> Self {
+        Self {
+            id,
+            project,
+            cwd,
+            started_at: Timestamp::now(),
+            ended_at: None,
+            observation_count: 0,
+        }
+    }
+}
 
 pub struct MemoryEngine {
     observations: Arc<RwLock<Vec<Observation>>>,
@@ -21,7 +45,7 @@ impl MemoryEngine {
     }
 
     pub async fn start_session(&self, project: &str) -> Result<SessionId> {
-        let session_id = SessionId::new(uuid::Uuid::new_v4().to_string());
+        let session_id = SessionId::new(&uuid::Uuid::new_v4().to_string());
         let session = Session::new(
             session_id.clone(),
             project.to_string(),
@@ -43,7 +67,7 @@ impl MemoryEngine {
     pub async fn end_session(&self) -> Result<()> {
         let mut current = self.current_session.write().await;
         if let Some(mut session) = current.take() {
-            session.ended_at = Some(synapsis::Timestamp::now());
+            session.ended_at = Some(Timestamp::now());
             let mut sessions = self.sessions.write().await;
             if let Some(s) = sessions.iter_mut().find(|s| s.id == session.id) {
                 s.ended_at = session.ended_at;
@@ -63,7 +87,7 @@ impl MemoryEngine {
             current
                 .as_ref()
                 .map(|s| s.id.clone())
-                .unwrap_or_else(|| SessionId::new(uuid::Uuid::new_v4().to_string()))
+                .unwrap_or_else(|| SessionId::new(&uuid::Uuid::new_v4().to_string()))
         };
 
         let observation = Observation::new(session_id, obs_type, title, content);
@@ -72,7 +96,7 @@ impl MemoryEngine {
         observations.push(observation.clone());
 
         let mut sessions = self.sessions.write().await;
-        if let Some(session) = sessions.iter_mut().find(|s| s.id == observation.session_id) {
+        if let Some(session) = sessions.iter_mut().find(|s| s.id.as_str() == observation.session_id) {
             session.observation_count += 1;
         }
 
@@ -85,7 +109,7 @@ impl MemoryEngine {
 
         let mut results: Vec<(Observation, f64)> = observations
             .iter()
-            .filter(|obs| obs.is_active())
+            .filter(|_obs| true)
             .filter_map(|obs| {
                 let mut score = 0.0;
                 let title_lower = obs.title.to_lowercase();
@@ -125,7 +149,7 @@ impl MemoryEngine {
         let observations = self.observations.read().await;
         let mut recent: Vec<Observation> = observations
             .iter()
-            .filter(|obs| obs.is_active())
+            .filter(|_obs| true)
             .cloned()
             .collect();
 

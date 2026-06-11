@@ -1,7 +1,7 @@
-use anyhow::Result;
+use anyhow::{Result, anyhow};
 use std::sync::Arc;
 use synapsis::infrastructure::database::Database;
-use synapsis::{Memory, MemoryPort, StoragePort};
+use synapsis::{Memory, MemoryPort, SessionId, StoragePort};
 
 const DEFAULT_SEARCH_LIMIT: usize = 5;
 
@@ -61,18 +61,14 @@ impl SqliteMemoryRepository {
 impl MemoryRepository for SqliteMemoryRepository {
     fn save(&self, agent_id: &str, prompt: &str, response: &str) -> Result<()> {
         let content = format!("Q: {}\nA: {}", prompt, response);
-        let memory = Memory::new(
-            agent_id.to_string(),
-            None,
-            "assistant".to_string(),
-            content,
-        );
-        self.db.save_memory(&memory)?;
+        let session_id = SessionId::new(agent_id);
+        let memory = Memory::new(session_id, content);
+        self.db.save_memory(&memory).map_err(|e| anyhow!(e))?;
         Ok(())
     }
 
     fn recall(&self, query: &str, limit: usize) -> Result<Vec<String>> {
-        let results = self.db.search_fts(query, None, limit as i32)?;
+        let results = self.db.search_fts(query, None, limit as i32).map_err(|e| anyhow!(e))?;
         Ok(results
             .iter()
             .map(|entry| {

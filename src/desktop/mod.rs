@@ -230,6 +230,10 @@ impl eframe::App for App {
         egui::CentralPanel::default()
             .frame(egui::Frame::none().fill(Color32::TRANSPARENT))
             .show(ctx, |ui| {
+                if ui.input(|i| i.key_pressed(egui::Key::Escape)) {
+                    self.sidebar_open = false;
+                    self.sphere_selected = false;
+                }
                 let r = ui.max_rect();
                 let t = self.start.elapsed().as_secs_f32();
 
@@ -243,9 +247,15 @@ impl eframe::App for App {
                 }
 
                 match self.view {
+                    View::Trading => {
+                        self.sphere_selected = false;
+                        self.render_trading_view(ui, r, t, primary)
+                    },
+                    View::Conversations => {
+                        self.sphere_selected = false;
+                        self.render_conversations_view(ui, r, alpha, primary)
+                    },
                     View::Hud => self.render_hud_view(ui, r, t, sphere_cx, sphere_cy, primary),
-                    View::Trading => self.render_trading_view(ui, r, t, primary),
-                    View::Conversations => self.render_conversations_view(ui, r, alpha, primary),
                 }
 
                 if self.sphere_selected {
@@ -503,7 +513,7 @@ impl App {
                         ui.put(logo_rect, egui::Image::new(tex).fit_to_exact_size(logo_size));
                         if logo_rect.contains(ui.ctx().pointer_interact_pos().unwrap_or(Pos2::ZERO))
                             && ui.input(|i| i.pointer.any_click()) {
-                            self.sidebar_open = true;
+                            self.sidebar_open = !self.sidebar_open;
                         }
                     } else {
                         if btn(ui, RichText::new("☰").size(18.0).color(primary)).clicked() {
@@ -518,10 +528,23 @@ impl App {
                         let text_color = if active { primary } else { Color32::from_rgb(80, 60, 130) };
                         if btn_rounded(ui, RichText::new(*label).color(text_color).size(11.0), Rounding::same(12.0), Vec2::new(0.0, 28.0)).clicked() {
                             self.view = view.clone();
+                            if *view == View::Hud { self.sphere_selected = false; }
                         }
                     }
 
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if btn(ui, RichText::new("✕").size(14.0).color(Color32::from_rgb(200, 80, 80)))
+                            .on_hover_text("Close")
+                            .clicked() {
+                            ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
+                        }
+                        ui.add_space(2.0);
+                        if btn(ui, RichText::new("─").size(14.0).color(Color32::from_rgb(160, 160, 180)))
+                            .on_hover_text("Minimize")
+                            .clicked() {
+                            ui.ctx().send_viewport_cmd(egui::ViewportCommand::Minimized(true));
+                        }
+                        ui.add_space(6.0);
                         let s = self.start.elapsed().as_secs();
                         ui.label(RichText::new(format!("{:02}:{:02}:{:02}", s/3600, (s%3600)/60, s%60))
                             .color(Color32::from_rgb(180, 150, 230)).size(11.0).monospace());
@@ -969,23 +992,55 @@ impl App {
         let intensity = self.current_emotion.intensity();
         self.main_sphere.render(&ui.painter(), Pos2::new(sphere_cx, sphere_cy), hue, sat, intensity, 0.5, t, 0.3, 0.5, 0.1, 0.0, 0.6);
 
-        let panel = Rect::from_min_size(Pos2::new(r.left() + 20.0, r.top() + 60.0), Vec2::new(360.0, 350.0));
-        ui.painter().rect_filled(panel, Rounding::same(8.0), Color32::from_rgba_premultiplied(0, 8, 20, 230));
-        ui.allocate_ui_at_rect(panel.shrink(10.0), |ui| {
-            scroll_area().show(ui, |ui| {
-                ui.label(RichText::new("🧠 Umbra Analysis").color(primary).size(13.0).strong());
-                ui.separator();
-                ui.label(RichText::new(&self.umbra_analysis).color(Color32::from_rgb(180, 200, 220)).size(10.0).monospace());
-                ui.separator();
-                ui.label(RichText::new("💬 Chat with Umbra").color(primary).size(12.0).strong());
-                for msg in &self.chat_messages {
-                    let c = if msg.is_user { primary } else { Color32::from_rgb(180, 200, 220) };
-                    ui.label(RichText::new(&msg.text).color(c).size(10.0).monospace());
-                }
+        let pw = 380.0;
+        let panel = Rect::from_min_size(
+            Pos2::new(r.right() - pw - 16.0, r.top() + 50.0),
+            Vec2::new(pw, (r.height() - 80.0).min(500.0)),
+        );
+        let panel_bg = Color32::from_rgba_premultiplied(2, 10, 24, 235);
+        let panel_border = Stroke::new(1.0, Color32::from_rgba_premultiplied(100, 70, 180, 80));
+
+        ui.painter().rect_filled(panel, Rounding::same(10.0), panel_bg);
+        ui.painter().rect_stroke(panel, Rounding::same(10.0), panel_border);
+
+        let inner = panel.shrink(12.0);
+        ui.allocate_ui_at_rect(inner, |ui| {
+            ui.horizontal(|ui| {
+                ui.label(RichText::new("🧠 Umbra Analysis").color(primary).size(14.0).strong());
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    if btn(ui, RichText::new("✕").size(14.0).color(Color32::from_rgb(167, 139, 250))).clicked() {
+                        self.sphere_selected = false;
+                    }
+                });
+            });
+            ui.separator();
+            ui.add_space(4.0);
+
+            let analysis_h = ui.available_height() - 90.0;
+            egui::ScrollArea::vertical()
+                .max_height(analysis_h.max(80.0))
+                .auto_shrink([false; 2])
+                .show(ui, |ui| {
+                    ui.label(RichText::new(&self.umbra_analysis).color(Color32::from_rgb(180, 200, 220)).size(10.0).monospace());
+                });
+
+            ui.separator();
+            ui.add_space(2.0);
+            ui.label(RichText::new("💬 Chat with Umbra").color(primary).size(11.0).strong());
+            ui.add_space(2.0);
+
+            for msg in &self.chat_messages {
+                let c = if msg.is_user { primary } else { Color32::from_rgb(180, 200, 220) };
+                ui.label(RichText::new(&msg.text).color(c).size(10.0).monospace());
+            }
+
+            ui.add_space(4.0);
+            ui.horizontal(|ui| {
                 let resp = ui.add(egui::TextEdit::singleline(&mut self.hud_input)
-                    .hint_text("Ask Umbra anything...").desired_width(320.0));
+                    .hint_text("Ask Umbra anything...")
+                    .desired_width(pw - 90.0));
                 let submit = resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter));
-                if btn(ui, RichText::new("Send").size(9.0)).on_hover_text("Send message").clicked() || submit {
+                if btn(ui, RichText::new("Send").size(9.0)).clicked() || submit {
                     let text = self.hud_input.trim().to_string();
                     if !text.is_empty() {
                         self.chat_messages.push(Message { sender: "user".into(), text: format!("You: {}", text), is_user: true });
@@ -999,13 +1054,19 @@ impl App {
 
     fn render_sidebar_menu(&mut self, ui: &mut egui::Ui, r: Rect, primary: Color32) {
         let overlay = Rect::from_min_size(Pos2::ZERO, Vec2::new(r.width(), r.height()));
-        ui.painter().rect_filled(overlay, Rounding::ZERO, Color32::from_rgba_premultiplied(0, 2, 8, 50));
-
         let menu_w = 440.0;
         let menu_h = r.height() - 80.0;
         let menu_x = (r.width() - menu_w) / 2.0;
         let menu_y = 40.0;
         let menu_rect = Rect::from_min_size(Pos2::new(menu_x, menu_y), Vec2::new(menu_w, menu_h));
+        let overlay_sense = ui.allocate_rect(overlay, egui::Sense::click());
+        if overlay_sense.clicked() {
+            let mouse_pos = ui.ctx().pointer_interact_pos().unwrap_or(Pos2::ZERO);
+            if !menu_rect.contains(mouse_pos) {
+                self.sidebar_open = false;
+            }
+        }
+        ui.painter().rect_filled(overlay, Rounding::ZERO, Color32::from_rgba_premultiplied(0, 2, 8, 50));
         ui.painter().rect_filled(menu_rect, Rounding::same(12.0), Color32::from_rgba_premultiplied(0, 6, 16, 200));
         ui.painter().rect_stroke(menu_rect, Rounding::same(12.0), Stroke::new(1.0, Color32::from_rgba_premultiplied(60, 40, 100, 80)));
 
