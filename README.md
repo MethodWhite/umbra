@@ -133,3 +133,25 @@ umbra/
 ## License
 
 MIT — See [LICENSE](LICENSE) for details.
+
+## Releases
+
+### v0.3.0 (Latest) — Modular Clean Architecture
+- 47 new modules with domain/application/infrastructure layers
+- STT/TTS ports, Voice ID, Language Detection, Cybersecurity modules
+- 12 use cases for voice, security, execution, and agent processing
+- Clean Architecture with proper trait-based ports and adapters
+
+### v0.2.0 — AI Agent System Launch
+- Local model detection (Ollama/llama.cpp)
+- API key management with 23 providers
+- 3D sphere visualization with emotional colors
+- Trading panel with chart, order entry, broker config
+- Window drag/resize, fullscreen menu overlay
+
+### v0.1.0 — Foundation
+- Core architecture with egui desktop GUI
+- Plutchik emotional system (80+ emotions)
+- Cognitive therapy system for AI agents
+- IronClaw security layer
+- HSAQ compression engine
