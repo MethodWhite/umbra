@@ -109,3 +109,88 @@ impl OllamaClient {
         }
     }
 }
+
+// ── STT client (whisper.cpp / OpenAI Whisper) ───────────────────────────────
+
+pub struct SttClient {
+    base_url: String,
+    api_key: Option<String>,
+    client: reqwest::Client,
+}
+
+impl SttClient {
+    pub fn new_local() -> Self {
+        Self {
+            base_url: "http://localhost:8080".into(),
+            api_key: None,
+            client: reqwest::Client::builder()
+                .timeout(std::time::Duration::from_secs(60))
+                .build().expect("Failed to build HTTP client"),
+        }
+    }
+
+    pub fn new_openai(api_key: String) -> Self {
+        Self {
+            base_url: "https://api.openai.com/v1".into(),
+            api_key: Some(api_key),
+            client: reqwest::Client::builder()
+                .timeout(std::time::Duration::from_secs(60))
+                .build().expect("Failed to build HTTP client"),
+        }
+    }
+
+    /// Transcribe audio bytes to text using whisper.cpp server API
+    pub async fn transcribe(&self, audio_data: &[u8]) -> Result<String, AiError> {
+        if let Some(key) = &self.api_key {
+            self.transcribe_openai(audio_data, key).await
+        } else {
+            self.transcribe_local(audio_data).await
+        }
+    }
+
+    async fn transcribe_local(&self, audio_data: &[u8]) -> Result<String, AiError> {
+        let form = reqwest::multipart::Form::new()
+            .part("file", reqwest::multipart::Part::bytes(audio_data.to_vec())
+                .file_name("audio.wav")
+                .mime_str("audio/wav").unwrap())
+            .text("model", "ggml-base.en")
+            .text("response_format", "text");
+
+        let resp = self.client.post(format!("{}/inference", self.base_url))
+            .multipart(form)
+            .send().await
+            .map_err(|e| AiError::Request(format!("STT request failed: {}", e)))?;
+
+        if resp.status() == 200 {
+            let text = resp.text().await
+                .map_err(|e| AiError::Parse(format!("STT parse failed: {}", e)))?;
+            Ok(text.trim().to_string())
+        } else {
+            Err(AiError::Http(resp.status().as_u16(), resp.text().await.unwrap_or_default()))
+        }
+    }
+
+    async fn transcribe_openai(&self, audio_data: &[u8], api_key: &str) -> Result<String, AiError> {
+        let form = reqwest::multipart::Form::new()
+            .part("file", reqwest::multipart::Part::bytes(audio_data.to_vec())
+                .file_name("audio.wav")
+                .mime_str("audio/wav").unwrap())
+            .text("model", "whisper-1");
+
+        let resp = self.client.post(format!("{}/audio/transcriptions", self.base_url))
+            .header("Authorization", format!("Bearer {}", api_key))
+            .multipart(form)
+            .send().await
+            .map_err(|e| AiError::Request(format!("OpenAI STT failed: {}", e)))?;
+
+        if resp.status() == 200 {
+            #[derive(Deserialize)]
+            struct WhisperResponse { text: String }
+            let data = resp.json::<WhisperResponse>().await
+                .map_err(|e| AiError::Parse(format!("STT parse failed: {}", e)))?;
+            Ok(data.text.trim().to_string())
+        } else {
+            Err(AiError::Http(resp.status().as_u16(), resp.text().await.unwrap_or_default()))
+        }
+    }
+}

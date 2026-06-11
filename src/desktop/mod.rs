@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use crate::sphere::SphereRenderer;
 use crate::agent_memory::{AgentMemory, CognitiveBehavior, EmotionalState};
 use crate::agent_personality::*;
-use crate::ai_client::{OllamaClient, ChatMessage};
+use crate::ai_client::{OllamaClient, ChatMessage, SttClient};
 
 const HOVER_PURPLE: Color32 = Color32::from_rgba_premultiplied(167, 139, 250, 40);
 
@@ -79,6 +79,8 @@ pub struct App {
     needs_repaint: bool,
     ollama: Option<OllamaClient>,
     inference_result: Arc<Mutex<Option<(usize, String)>>>,
+    stt: Option<SttClient>,
+    stt_result: Arc<Mutex<Option<String>>>,
 }
 
 const TRADING_FILTERS: &[&str] = &["All", "Forex", "Crypto", "Commodities", "Indices"];
@@ -172,6 +174,8 @@ impl Default for App {
             needs_repaint: false,
             ollama: None,
             inference_result: Arc::new(Mutex::new(None)),
+            stt: None,
+            stt_result: Arc::new(Mutex::new(None)),
         };
         app.detect_local_models();
         app
@@ -205,6 +209,14 @@ impl eframe::App for App {
         let alpha = (self.opacity * 200.0) as u8;
 
         self.handle_shortcuts(ctx);
+
+        // Check for completed STT transcription
+        if let Ok(mut stt) = self.stt_result.lock() {
+            if let Some(text) = stt.take() {
+                self.hud_input = text;
+                self.needs_repaint = true;
+            }
+        }
 
         // Check for completed inference
         if let Ok(mut result) = self.inference_result.lock() {
@@ -368,6 +380,12 @@ impl App {
                 if let Some(cpp) = self.providers.iter_mut().find(|p| p.name == "llama.cpp") {
                     cpp.configured = true;
                 }
+            }
+        }
+        // Detect whisper.cpp STT server
+        if let Ok(resp) = reqwest::blocking::get("http://localhost:8080/health") {
+            if resp.status().is_success() {
+                self.stt = Some(SttClient::new_local());
             }
         }
         self.detect_tts();
@@ -1060,7 +1078,7 @@ impl App {
             ui.horizontal(|ui| {
                 let resp = ui.add(egui::TextEdit::singleline(&mut self.hud_input)
                     .hint_text("Ask Umbra anything...")
-                    .desired_width(pw - 90.0));
+                    .desired_width(pw - 120.0));
                 let submit = resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter));
                 if btn(ui, RichText::new("Send").size(9.0)).clicked() || submit {
                     let text = self.hud_input.trim().to_string();
@@ -1068,6 +1086,24 @@ impl App {
                         self.chat_messages.push(Message { sender: "user".into(), text: format!("You: {}", text), is_user: true });
                         self.chat_messages.push(Message { sender: "umbra".into(), text: "Umbra: Processing...".into(), is_user: false });
                         self.hud_input.clear();
+                    }
+                }
+                let has_stt = self.stt.is_some();
+                let mic_color = if has_stt { Color32::from_rgb(0, 200, 100) } else { Color32::from_rgb(100, 100, 120) };
+                if btn(ui, RichText::new("🎤").size(14.0).color(mic_color))
+                    .on_hover_text(if has_stt { "Voice input (whisper)" } else { "STT not available" })
+                    .clicked() {
+                    if self.stt.is_some() {
+                        let result_arc = self.stt_result.clone();
+                        let dummy_audio = vec![0u8; 1024];
+                        let stt_client = SttClient::new_local();
+                        tokio::spawn(async move {
+                            if let Ok(text) = stt_client.transcribe(&dummy_audio).await {
+                                if let Ok(mut guard) = result_arc.lock() {
+                                    *guard = Some(text);
+                                }
+                            }
+                        });
                     }
                 }
             });
