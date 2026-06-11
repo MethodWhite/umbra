@@ -291,3 +291,64 @@ impl MarketDataClient {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_ai_error_display_request() {
+        let err = AiError::Request("test".into());
+        assert!(err.to_string().contains("test"));
+    }
+
+    #[test]
+    fn test_ai_error_display_http() {
+        let err = AiError::Http(404, "not found".into());
+        assert!(err.to_string().contains("404"));
+    }
+
+    #[test]
+    fn test_ollama_client_new() {
+        let _client = OllamaClient::new();
+    }
+
+    #[test]
+    fn test_stt_client_new_local() {
+        let client = SttClient::new_local();
+        assert_eq!(client.base_url, "http://localhost:8080");
+    }
+
+    #[test]
+    fn test_stt_client_new_openai() {
+        let client = SttClient::new_openai("sk-test".into());
+        assert_eq!(client.base_url, "https://api.openai.com/v1");
+        assert!(client.api_key.is_some());
+    }
+
+    #[test]
+    fn test_market_data_simulated() {
+        let client = MarketDataClient::new_simulated();
+        let quote = client.quote_simulated("EURUSD");
+        assert_eq!(quote.symbol, "EURUSD");
+        assert!(quote.bid > 0.0);
+        assert!(quote.ask > quote.bid);
+    }
+
+    #[test]
+    fn test_chat_message_serde() {
+        let msg = ChatMessage { role: "user".into(), content: "hello".into() };
+        let json = serde_json::to_string(&msg).unwrap();
+        assert!(json.contains("user"));
+    }
+
+    #[test]
+    fn test_quote_simulated_various_symbols() {
+        let client = MarketDataClient::new_simulated();
+        for sym in &["EURUSD", "BTCUSD", "XAUUSD", "SP500", "UNKNOWN"] {
+            let q = client.quote_simulated(sym);
+            assert_eq!(q.symbol, *sym);
+            assert!(q.bid > 0.0);
+        }
+    }
+}

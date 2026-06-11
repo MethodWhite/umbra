@@ -103,3 +103,25 @@ impl Default for UmbraConfig {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_default_config() {
+        let cfg = UmbraConfig::default();
+        assert!(cfg.paths.models_dir.to_string_lossy().contains("umbra"));
+        assert_eq!(cfg.api.frontend_port, 8340);
+        assert_eq!(cfg.api.backend_port, 8484);
+        assert_eq!(cfg.audio.default_voice_id.len(), 32);
+        assert_eq!(cfg.training.max_examples, 1000);
+    }
+
+    #[test]
+    fn test_config_default_api() {
+        let cfg = UmbraConfig::default();
+        assert_eq!(cfg.api.frontend_port, 8340);
+        assert_eq!(cfg.api.backend_port, 8484);
+    }
+}

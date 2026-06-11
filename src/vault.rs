@@ -68,3 +68,20 @@ impl VaultReader {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_vault_reader_not_panics() {
+        let _ = VaultReader::new();
+    }
+
+    #[test]
+    fn test_check_key_available_no_server() {
+        let reader = VaultReader::new();
+        // With no vault server running, should return false
+        assert!(!reader.check_key_available("openai"));
+    }
+}

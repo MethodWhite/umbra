@@ -148,3 +148,47 @@ impl ConversationThread {
         &self.messages[start..]
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_agent_personality_new() {
+        let p = AgentPersonality::new("test-agent", AiGender::Neutral);
+        assert_eq!(p.name, "test-agent");
+    }
+
+    #[test]
+    fn test_ai_gender_icon() {
+        assert_eq!(AiGender::Male.icon(), "♂️");
+        assert_eq!(AiGender::Female.icon(), "♀️");
+    }
+
+    #[test]
+    fn test_conversation_thread() {
+        let mut t = ConversationThread::new("test topic");
+        assert_eq!(t.topic, "test topic");
+        t.add_message("alice", "hello", &AiGender::Female, OpinionType::Agreement);
+        assert_eq!(t.messages.len(), 1);
+    }
+
+    #[test]
+    fn test_last_n() {
+        let mut t = ConversationThread::new("topic");
+        t.add_message("a0", "msg", &AiGender::Neutral, OpinionType::Analysis);
+        t.add_message("a1", "msg", &AiGender::Neutral, OpinionType::Suggestion);
+        t.add_message("a2", "msg", &AiGender::Neutral, OpinionType::Warning);
+        assert_eq!(t.last_n(2).len(), 2);
+        assert_eq!(t.last_n(10).len(), 3);
+    }
+
+    #[test]
+    fn test_add_message() {
+        let mut t = ConversationThread::new("t");
+        t.add_message("alice", "hi", &AiGender::Female, OpinionType::Agreement);
+        t.add_message("bob", "hey", &AiGender::Male, OpinionType::Suggestion);
+        assert_eq!(t.messages.len(), 2);
+        assert_eq!(t.messages[0].from, "alice");
+    }
+}

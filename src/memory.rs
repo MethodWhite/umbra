@@ -173,3 +173,98 @@ impl MemoryEngine {
         (total, agents.len())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::agent_memory::EmotionalState;
+
+    fn test_repo() -> impl MemoryRepository {
+        InMemoryMemoryStore::new()
+    }
+
+    #[test]
+    fn test_save_and_count() {
+        let repo = test_repo();
+        assert_eq!(repo.count(), 0);
+        let entry = MemoryEntry {
+            id: 0, agent_id: "test".into(), session_id: String::new(),
+            prompt: "hello".into(), response: "world".into(),
+            emotion: EmotionalState::calm(), agent_personality: "neutral".into(),
+            tags: vec![], created_at: 0,
+        };
+        repo.save(entry).unwrap();
+        assert_eq!(repo.count(), 1);
+    }
+
+    #[test]
+    fn test_search_finds_relevant() {
+        let repo = test_repo();
+        let entry = MemoryEntry {
+            id: 0, agent_id: "test".into(), session_id: String::new(),
+            prompt: "What is the capital of France?".into(),
+            response: "Paris".into(),
+            emotion: EmotionalState::calm(), agent_personality: "neutral".into(),
+            tags: vec![], created_at: 0,
+        };
+        repo.save(entry).unwrap();
+        let results = repo.search("France", None, 5).unwrap();
+        assert_eq!(results.len(), 1);
+    }
+
+    #[test]
+    fn test_search_no_match() {
+        let repo = test_repo();
+        let entry = MemoryEntry {
+            id: 0, agent_id: "test".into(), session_id: String::new(),
+            prompt: "hello".into(), response: "world".into(),
+            emotion: EmotionalState::calm(), agent_personality: "neutral".into(),
+            tags: vec![], created_at: 0,
+        };
+        repo.save(entry).unwrap();
+        let results = repo.search("nonexistent", None, 5).unwrap();
+        assert!(results.is_empty());
+    }
+
+    #[test]
+    fn test_recall_by_agent() {
+        let repo = test_repo();
+        for i in 0..3 {
+            let entry = MemoryEntry {
+                id: 0, agent_id: format!("agent{}", i), session_id: String::new(),
+                prompt: "test".into(), response: "data".into(),
+                emotion: EmotionalState::calm(), agent_personality: "neutral".into(),
+                tags: vec![], created_at: 0,
+            };
+            repo.save(entry).unwrap();
+        }
+        let results = repo.recall_by_agent("agent1", 10).unwrap();
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].agent_id, "agent1");
+    }
+
+    #[test]
+    fn test_delete_removes_entry() {
+        let repo = test_repo();
+        let mut entry = MemoryEntry {
+            id: 0, agent_id: "test".into(), session_id: String::new(),
+            prompt: "test".into(), response: "data".into(),
+            emotion: EmotionalState::calm(), agent_personality: "neutral".into(),
+            tags: vec![], created_at: 0,
+        };
+        repo.save(entry.clone()).unwrap();
+        let entries = repo.recent(10).unwrap();
+        let id = entries[0].id;
+        repo.delete(id).unwrap();
+        assert_eq!(repo.count(), 0);
+    }
+
+    #[test]
+    fn test_engine_save_and_stats() {
+        let engine = MemoryEngine::new();
+        engine.save("agent1", "hello", "world", &EmotionalState::calm(), "analytical").unwrap();
+        let (total, agents) = engine.stats();
+        assert_eq!(total, 1);
+        assert_eq!(agents, 1);
+    }
+}
