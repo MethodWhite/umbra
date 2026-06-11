@@ -45,11 +45,16 @@ impl VaultReader {
         }
     }
 
-    pub fn get_key(&self, _provider_id: &str) -> Option<String> {
+    pub fn get_key(&self, provider_id: &str) -> Option<String> {
         if !self.is_unlocked() {
             return None;
         }
-        None
+        let url = format!("http://127.0.0.1:8340/api/vault/key/{}", provider_id);
+        match reqwest::blocking::get(&url) {
+            Ok(resp) => resp.json::<serde_json::Value>().ok()
+                .and_then(|j| j.get("key").and_then(|v| v.as_str().map(String::from))),
+            Err(_) => None,
+        }
     }
 
     pub fn check_key_available(&self, provider_id: &str) -> bool {

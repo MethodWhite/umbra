@@ -64,7 +64,7 @@ impl FrontendState {
                         let candidates = [
                             cwd.join("frontend/dist"),
                             cwd.join("../frontend/dist"),
-                            PathBuf::from("/home/methodwhite/frontend/dist"),
+                            dirs::home_dir().map(|d| d.join("frontend/dist")).unwrap_or_default(),
                         ];
                         for c in &candidates {
                             if c.join("index.html").exists() {

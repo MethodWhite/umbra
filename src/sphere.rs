@@ -4,7 +4,6 @@ use std::f32::consts::PI;
 #[derive(Clone)]
 pub struct SphereParticle {
     pub x: f32, pub y: f32, pub z: f32,
-    pub vx: f32, pub vy: f32, pub vz: f32,
     pub base_radius: f32,
     pub hue: f32,
 }
@@ -43,7 +42,6 @@ impl SphereRenderer {
                 x: radius * phi.sin() * theta.cos(),
                 y: radius * phi.cos(),
                 z: radius * phi.sin() * theta.sin(),
-                vx: 0.0, vy: 0.0, vz: 0.0,
                 base_radius: 1.0 + (i as f32 % 5.0) * 0.3,
                 hue: i as f32 * 0.618,
             });
