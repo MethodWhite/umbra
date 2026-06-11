@@ -1,0 +1,151 @@
+<mxfile host="Umbra" modified="2026-06-02T20:00:00.000Z">
+  <diagram name="MT4 Bridge" id="mt4-main">
+    <mxGraphModel dx="1218" dy="768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="UMBRA — MT4 BRIDGE ARCHITECTURE" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#e94560;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="10" width="520" height="40" />
+        </mxCell>
+
+        <!-- Left side: Umbra Rust -->
+        <mxCell id="umbrabg" value="UMBRA (Rust)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a3a2a;strokeColor=#2a6a3a;fontColor=#4ade80;fontStyle=1;fontSize=14;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="380" height="500" />
+        </mxCell>
+
+        <mxCell id="hermesmt4" value="Hermes: señal de trading" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3a2a5a;strokeColor=#5a3a7a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="100" width="340" height="40" />
+        </mxCell>
+
+        <mxCell id="pipelinelabel" value="Signal Pipeline" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#fbbf24;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="150" width="340" height="20" />
+        </mxCell>
+        <mxCell id="signalconv" value="Conversión: señal → orden struct" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="175" width="340" height="36" />
+        </mxCell>
+        <mxCell id="riskcheck" value="Risk Check: AntiBrick Trading Rules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="225" width="340" height="36" />
+        </mxCell>
+        <mxCell id="pqcsign" value="Firmar orden: Dilithium-4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="275" width="340" height="36" />
+        </mxCell>
+
+        <mxCell id="ffilabel" value="C ABI FFI Layer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#e94560;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="325" width="340" height="20" />
+        </mxCell>
+        <mxCell id="ffifn" value="extern \"C\" { fn umbra_analyze(); fn umbra_execute(); }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#0f3460;fontColor=#ffffff;fontFamily=Courier New;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="60" y="350" width="340" height="36" />
+        </mxCell>
+
+        <mxCell id="sandboxlabel" value="Strategy Sandbox" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#fbbf24;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="400" width="340" height="20" />
+        </mxCell>
+        <mxCell id="sandboxiso" value="Aislamiento: sin acceso a saldo real" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="425" width="340" height="36" />
+        </mxCell>
+        <mxCell id="sandboxlim" value="Límite de pérdida configurable" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="475" width="340" height="36" />
+        </mxCell>
+
+        <!-- Right side: MetaTrader 4 -->
+        <mxCell id="mt4bg" value="METATRADER 4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#16213e;fontColor=#fbbf24;fontStyle=1;fontSize=14;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="600" y="60" width="380" height="500" />
+        </mxCell>
+
+        <mxCell id="mql4" value="mql5_bridge.mq5 (Expert Advisor)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="620" y="100" width="340" height="40" />
+        </mxCell>
+
+        <mxCell id="ffimt4" value="FFI Call: umbra_analyze(signal)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#0f3460;fontColor=#ffffff;fontFamily=Courier New;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="620" y="175" width="340" height="36" />
+        </mxCell>
+        <mxCell id="ffimt42" value="FFI Call: umbra_execute(order)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#0f3460;fontColor=#ffffff;fontFamily=Courier New;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="620" y="225" width="340" height="36" />
+        </mxCell>
+
+        <mxCell id="mt4ea" value="Expert Advisor (.ex4)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="620" y="300" width="340" height="40" />
+        </mxCell>
+
+        <mxCell id="mt4terminal" value="MT4 Terminal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e94560;strokeColor=#c23152;fontColor=#ffffff;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="660" y="380" width="260" height="50" />
+        </mxCell>
+
+        <mxCell id="orderexec" value="Order Execution Engine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="620" y="470" width="340" height="40" />
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="a1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4ade80;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="420" y="275" />
+            <mxPoint x="620" y="275" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e94560;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="620" y="320" />
+            <mxPoint x="420" y="320" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4ade80;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="790" y="340" />
+            <mxPoint x="790" y="380" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4ade80;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="790" y="430" />
+            <mxPoint x="790" y="470" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- FFI label between sides -->
+        <mxCell id="ffilabelmid" value="FFI / C ABI" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#e94560;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="470" y="200" width="100" height="30" />
+        </mxCell>
+        <mxCell id="ffiarrow" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e94560;strokeWidth=3;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="420" y="210" />
+            <mxPoint x="600" y="210" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Connecting Hermes to pipeline -->
+        <mxCell id="hermes2sig" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#a78bfa;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="230" y="140" />
+            <mxPoint x="230" y="175" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sig2risk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4ade80;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="230" y="211" />
+            <mxPoint x="230" y="225" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="risk2pqc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4ade80;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="230" y="261" />
+            <mxPoint x="230" y="275" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pqc2ffi" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ff6b9d;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="230" y="311" />
+            <mxPoint x="230" y="350" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ffi2sand" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#fbbf24;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="230" y="386" />
+            <mxPoint x="230" y="425" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

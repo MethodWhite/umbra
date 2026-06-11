@@ -1,0 +1,7 @@
+target/
+*.AppImage
+frontend/node_modules/
+frontend/.angular/
+logs/
+models/
+dist-electron/

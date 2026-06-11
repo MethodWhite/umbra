@@ -1,0 +1,20 @@
+materia = "umbra_sub_agent"
+version = "1.0"
+
+[agent]
+name = "voice"
+version = "1.0.0"
+description = "Sub-agente ligero de procesamiento de voz y audio. Usa whisper.cpp tiny + piper TTS"
+capabilities = ["stt", "tts", "procesamiento_audio"]
+tools = ["transcribir", "sintetizar_voz", "detectar_idioma"]
+
+[agent.model]
+name = "whisper:tiny"
+familia = "whisper"
+quant = "Q8_0"
+context = 2048
+
+[agent.config]
+whisper_model = "tiny"
+piper_voice = "en_US-lessac-medium"
+sample_rate = "16000"

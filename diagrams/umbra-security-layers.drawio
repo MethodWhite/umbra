@@ -1,0 +1,83 @@
+<mxfile host="Umbra" modified="2026-06-02T20:00:00.000Z">
+  <diagram name="Security Layers" id="security-main">
+    <mxGraphModel dx="1218" dy="768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="UMBRA — ARQUITECTURA DE SEGURIDAD" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#e94560;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="10" width="420" height="40" />
+        </mxCell>
+
+        <!-- PQC Crypto Stack -->
+        <mxCell id="pqcbg" value="PQC CRYPTO STACK" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a3a2a;strokeColor=#2a6a3a;fontColor=#4ade80;fontStyle=1;fontSize=14;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="320" height="240" />
+        </mxCell>
+        <mxCell id="dilithium" value="Dilithium-4 (Firmas digitales)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="100" width="280" height="36" />
+        </mxCell>
+        <mxCell id="kyber" value="Kyber-512 (KEM — Intercambio de claves)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="150" width="280" height="36" />
+        </mxCell>
+        <mxCell id="sha3" value="SHA3-256/512 (Hash)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="200" width="280" height="36" />
+        </mxCell>
+        <mxCell id="chacha" value="ChaCha20-Poly1305 (Cifrado simétrico)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="250" width="280" height="36" />
+        </mxCell>
+
+        <!-- Zero Trust Runtime Enforcement -->
+        <mxCell id="ztbg" value="ZERO-TRUST RUNTIME" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d1b2e;strokeColor=#5c2a5e;fontColor=#ff6b9d;fontStyle=1;fontSize=14;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="400" y="60" width="320" height="240" />
+        </mxCell>
+        <mxCell id="identidad" value="1. Identidad (TPM + MFA)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3a1a3a;strokeColor=#5c2a5e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="420" y="100" width="280" height="36" />
+        </mxCell>
+        <mxCell id="permiso" value="2. Permiso (Capability-based)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3a1a3a;strokeColor=#5c2a5e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="420" y="150" width="280" height="36" />
+        </mxCell>
+        <mxCell id="riesgo" value="3. Riesgo (AntiBrick Analysis)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3a1a3a;strokeColor=#5c2a5e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="420" y="200" width="280" height="36" />
+        </mxCell>
+        <mxCell id="contexto" value="4. Contexto (Coherente con sesión)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3a1a3a;strokeColor=#5c2a5e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="420" y="250" width="280" height="36" />
+        </mxCell>
+
+        <!-- WASM Sandbox -->
+        <mxCell id="wasmbg" value="WASM SANDBOX" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#16213e;fontColor=#fbbf24;fontStyle=1;fontSize=14;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="760" y="60" width="260" height="240" />
+        </mxCell>
+        <mxCell id="wasmmem" value="Aislamiento de memoria" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="775" y="100" width="230" height="36" />
+        </mxCell>
+        <mxCell id="wasmfs" value="Sin acceso a FS (default)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="775" y="150" width="230" height="36" />
+        </mxCell>
+        <mxCell id="wasmcpu" value="CPU limitado (quantum)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="775" y="200" width="230" height="36" />
+        </mxCell>
+        <mxCell id="wasmapi" value="API capability-based" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="775" y="250" width="230" height="36" />
+        </mxCell>
+
+        <!-- Audit WORM -->
+        <mxCell id="auditbg" value="AUDITORÍA WORM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#16213e;fontColor=#e94560;fontStyle=1;fontSize=14;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="40" y="340" width="980" height="120" />
+        </mxCell>
+        <mxCell id="chainhash" value="Encadenamiento Hash (SHA3-256)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#0f3460;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="60" y="380" width="200" height="36" />
+        </mxCell>
+        <mxCell id="wormstore" value="Almacenamiento WORM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#0f3460;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="300" y="380" width="200" height="36" />
+        </mxCell>
+        <mxCell id="forensic" value="Exportación Forense" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#0f3460;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="540" y="380" width="200" height="36" />
+        </mxCell>
+        <mxCell id="realtime" value="Alerta en Tiempo Real" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#0f3460;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="780" y="380" width="200" height="36" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

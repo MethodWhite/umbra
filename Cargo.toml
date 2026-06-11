@@ -1,0 +1,102 @@
+[package]
+name = "umbra"
+version = "0.2.0"
+edition = "2021"
+authors = ["methodwhite"]
+description = "UMBRA - AI Agent System for MT4 Automated Trading"
+license = "MIT"
+
+[lib]
+name = "umbra"
+path = "src/lib.rs"
+
+[[bin]]
+name = "umbra"
+path = "src/main.rs"
+
+[dependencies]
+image = { version = "0.25", default-features = false, features = ["png"] }
+# Async
+tokio = { version = "=1.52.3", features = ["full"] }
+
+# HTTP
+reqwest = { version = "=0.12.28", features = ["json", "stream", "socks", "multipart", "blocking"] }
+
+# HTTP Server
+axum = { version = "=0.8.9", features = ["json", "ws", "macros"] }
+tower = "=0.5.3"
+tower-http = { version = "=0.6.11", features = ["cors", "trace"] }
+
+# Serialization
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = "=1.0.150"
+rmp-serde = "=1.3.0"
+
+# CLI
+clap = { version = "=4.6.1", features = ["derive"] }
+
+# GUI
+egui = "=0.29.1"
+eframe = { version = "=0.29.1", features = ["default"] }
+
+# Audio
+cpal = "=0.15.3"
+
+# Async streams
+futures = "=0.3.31"
+
+# Logging
+tracing = "=0.1.44"
+tracing-subscriber = { version = "=0.3.23", features = ["env-filter"] }
+
+# Error handling
+anyhow = "=1.0.102"
+thiserror = "=2.0.18"
+
+# Utilities
+dirs = "=5.0.1"
+uuid = { version = "=1.23.2", features = ["v4"] }
+chrono = { version = "=0.4.44", features = ["serde"] }
+regex = "=1.12.3"
+hex = "=0.4.3"
+base64 = "=0.22.1"
+
+# Engine
+wasmtime = "=43.0.2"
+toml = "=0.8.23"
+
+# Security
+sha2 = "=0.10.9"
+aes-gcm = "=0.10.3"
+pbkdf2 = "=0.12.2"
+hmac = "=0.12.1"
+libc = "=0.2.186"
+zeroize = { version = "=1.8.2", features = ["zeroize_derive"] }
+rand = "=0.8.6"
+
+# TLS
+tokio-rustls = "=0.26.4"
+pem = "=3.0.5"
+rustls = "=0.23.40"
+rcgen = "=0.13.2"
+
+# HTTP core (for TLS serve)
+hyper = { version = "=1.10.1", features = ["server", "http1"] }
+hyper-util = { version = "=0.1.20", features = ["tokio", "server", "service"] }
+
+# Synapsis memory engine
+synapsis = { path = "../synapsis" }
+
+[features]
+default = ["full"]
+full = []
+minimal = []
+
+[patch.crates-io]
+paste = { git = "https://github.com/MethodWhite/paste", tag = "v1.0.15-umbra" }
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+strip = true

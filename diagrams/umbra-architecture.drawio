@@ -1,0 +1,114 @@
+<mxfile host="Umbra" modified="2026-06-02T20:00:00.000Z">
+  <diagram name="Architecture" id="arch-main">
+    <mxGraphModel dx="1218" dy="768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Layer 5: External Interface -->
+        <mxCell id="l5bg" value="INTERFAZ EXTERNA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#16213e;fontColor=#e94560;fontStyle=1;fontSize=12;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="40" y="30" width="1020" height="90" />
+        </mxCell>
+        <mxCell id="cli" value="CLI (mw)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="70" y="60" width="150" height="40" />
+        </mxCell>
+        <mxCell id="tui" value="TUI (ratatui)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="260" y="60" width="150" height="40" />
+        </mxCell>
+        <mxCell id="mt4api" value="MT4 API (FFI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e94560;strokeColor=#c23152;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="450" y="60" width="150" height="40" />
+        </mxCell>
+        <mxCell id="mesh" value="Mesh Network (P2P)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="640" y="60" width="170" height="40" />
+        </mxCell>
+
+        <!-- Layer 4: Security (Thoth) -->
+        <mxCell id="l4bg" value="CAPA DE SEGURIDAD — THOTH" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d1b2e;strokeColor=#5c2a5e;fontColor=#ff6b9d;fontStyle=1;fontSize=12;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="40" y="150" width="1020" height="90" />
+        </mxCell>
+        <mxCell id="enforce" value="Runtime Enforce (&lt;100ms)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5c2a5e;strokeColor=#7a3b7a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="70" y="180" width="200" height="40" />
+        </mxCell>
+        <mxCell id="pqccrypto" value="PQC Crypto (Kyber/Dilithium)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5c2a5e;strokeColor=#7a3b7a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="310" y="180" width="200" height="40" />
+        </mxCell>
+        <mxCell id="ztgate" value="Zero-Trust Gate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5c2a5e;strokeColor=#7a3b7a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="550" y="180" width="180" height="40" />
+        </mxCell>
+        <mxCell id="audit" value="Auditoría WORM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5c2a5e;strokeColor=#7a3b7a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="770" y="180" width="180" height="40" />
+        </mxCell>
+
+        <!-- Layer 3: Core (MATERIA) -->
+        <mxCell id="l3bg" value="CAPA DE CORE — MATERIA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a3a2a;strokeColor=#1a4a2a;fontColor=#4ade80;fontStyle=1;fontSize=12;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="40" y="270" width="1020" height="90" />
+        </mxCell>
+        <mxCell id="jepa" value="JEPA Engine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="70" y="300" width="180" height="40" />
+        </mxCell>
+        <mxCell id="multibackend" value="Multi-Backend Router" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="290" y="300" width="180" height="40" />
+        </mxCell>
+        <mxCell id="memory" value="Synapsis Memory" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="510" y="300" width="180" height="40" />
+        </mxCell>
+        <mxCell id="wasm" value="WASM Sandbox" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="730" y="300" width="180" height="40" />
+        </mxCell>
+
+        <!-- Layer 2: Learning (Hermes) -->
+        <mxCell id="l2bg" value="CAPA DE APRENDIZAJE — HERMES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2a1a3a;strokeColor=#3a2a5a;fontColor=#a78bfa;fontStyle=1;fontSize=12;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="40" y="390" width="1020" height="90" />
+        </mxCell>
+        <mxCell id="agentloop" value="Agent Loop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3a2a5a;strokeColor=#5a3a7a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="70" y="420" width="180" height="40" />
+        </mxCell>
+        <mxCell id="skillmgr" value="Skill Manager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3a2a5a;strokeColor=#5a3a7a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="290" y="420" width="180" height="40" />
+        </mxCell>
+        <mxCell id="trainer" value="Training Pipeline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3a2a5a;strokeColor=#5a3a7a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="510" y="420" width="180" height="40" />
+        </mxCell>
+        <mxCell id="messaging" value="Multi-Platform Msg" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3a2a5a;strokeColor=#5a3a7a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="730" y="420" width="180" height="40" />
+        </mxCell>
+
+        <!-- Layer 1: Infrastructure -->
+        <mxCell id="l1bg" value="CAPA DE INFRAESTRUCTURA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#16213e;fontColor=#fbbf24;fontStyle=1;fontSize=12;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="40" y="510" width="1020" height="90" />
+        </mxCell>
+        <mxCell id="harden" value="OpenVentus Hardening" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#2a3a5a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="70" y="540" width="210" height="40" />
+        </mxCell>
+        <mxCell id="ghost" value="Sora-Ghost Anonymity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#2a3a5a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="320" y="540" width="210" height="40" />
+        </mxCell>
+        <mxCell id="monitor" value="Ghost Monitor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#2a3a5a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="570" y="540" width="180" height="40" />
+        </mxCell>
+        <mxCell id="backupdr" value="Backup / DR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#2a3a5a;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="790" y="540" width="160" height="40" />
+        </mxCell>
+
+        <!-- Vertical arrows between layers -->
+        <mxCell id="a1-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4ade80;strokeWidth=2;" parent="1" edge="1" source="tui" target="enforce">
+          <mxGeometry relative="1" />
+        </mxCell>
+        <mxCell id="a2-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#a78bfa;strokeWidth=2;" parent="1" edge="1" source="enforce" target="jepa">
+          <mxGeometry relative="1" />
+        </mxCell>
+        <mxCell id="a3-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ff6b9d;strokeWidth=2;" parent="1" edge="1" source="jepa" target="agentloop">
+          <mxGeometry relative="1" />
+        </mxCell>
+        <mxCell id="a4-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#fbbf24;strokeWidth=2;" parent="1" edge="1" source="agentloop" target="harden">
+          <mxGeometry relative="1" />
+        </mxCell>
+
+        <!-- Right label: LAYERS -->
+        <mxCell id="layersLabel" value="LAYERS" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#888888;fontSize=10;fontStyle=1;rotation=0;" parent="1" vertex="1">
+          <mxGeometry x="960" y="42" width="40" height="650" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

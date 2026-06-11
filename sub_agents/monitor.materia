@@ -1,0 +1,20 @@
+materia = "umbra_sub_agent"
+version = "1.0"
+
+[agent]
+name = "monitor"
+version = "1.0.0"
+description = "Sub-agente de monitoreo de hardware, sistema y seguridad"
+capabilities = ["monitoreo_hardware", "seguridad", "alertas", "auto_mantenimiento"]
+tools = ["check_hardware", "analizar_logs", "limpiar_cache", "reportar_estado"]
+
+[agent.model]
+name = "tinyllama:latest"
+familia = "ollama"
+quant = "Q4_K_M"
+context = 2048
+
+[agent.config]
+temp_threshold = "85"
+check_interval = "60"
+auto_cleanup = "true"

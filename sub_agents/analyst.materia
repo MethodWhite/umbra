@@ -1,0 +1,19 @@
+materia = "umbra_sub_agent"
+version = "1.0"
+
+[agent]
+name = "analyst"
+version = "1.0.0"
+description = "Sub-agente de análisis de mercado e investigación en tiempo real"
+capabilities = ["investigacion", "analisis_noticias", "analisis_onchain", "reportes"]
+tools = ["investigar", "analizar_sentimiento", "generar_reporte"]
+
+[agent.model]
+name = "llama3.2:3b"
+familia = "ollama"
+quant = "Q8_0"
+context = 4096
+
+[agent.config]
+max_sources = "10"
+update_interval = "300"

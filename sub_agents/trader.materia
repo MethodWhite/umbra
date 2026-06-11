@@ -1,0 +1,21 @@
+materia = "umbra_sub_agent"
+version = "1.0"
+
+[agent]
+name = "trader"
+version = "1.0.0"
+description = "Sub-agente especializado en análisis y ejecución de trading algorítmico en MT4"
+capabilities = ["analisis_tecnico", "ejecucion_mt4", "gestion_riesgo", "backtesting"]
+tools = ["analizar_mercado", "ejecutar_orden", "calcular_riesgo", "optimizar_estrategia"]
+
+[agent.model]
+name = "qwen2.5:7b"
+familia = "ollama"
+quant = "Q4_K_M"
+context = 8192
+
+[agent.config]
+max_positions = "5"
+daily_loss_limit = "5.0"
+leverage = "1:30"
+paper_trading = "true"

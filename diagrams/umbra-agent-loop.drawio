@@ -1,0 +1,137 @@
+<mxfile host="Umbra" modified="2026-06-02T20:00:00.000Z">
+  <diagram name="Agent Loop" id="loop-main">
+    <mxGraphModel dx="1218" dy="768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="UMBRA — HERMES AGENT LOOP" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#a78bfa;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="10" width="520" height="40" />
+        </mxCell>
+
+        <!-- Input -->
+        <mxCell id="input" value="Input (prompt / señal)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#e94560;fontColor=#ffffff;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="65" width="180" height="40" />
+        </mxCell>
+
+        <!-- Step 1: Plan -->
+        <mxCell id="plan" value="1. PLAN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#2a6a3a;fontColor=#ffffff;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="140" width="180" height="45" />
+        </mxCell>
+        <mxCell id="plansub" value="Analizar objetivo, descomponer tareas" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#aaa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="420" y="185" width="180" height="18" />
+        </mxCell>
+
+        <!-- Step 2: Think -->
+        <mxCell id="think" value="2. THINK (CoT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3a2a5a;strokeColor=#5a3a7a;fontColor=#ffffff;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="230" width="180" height="45" />
+        </mxCell>
+        <mxCell id="thinksub" value="Razonamiento, contexto, Synapsis" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#aaa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="420" y="275" width="180" height="18" />
+        </mxCell>
+
+        <!-- Step 3: Act -->
+        <mxCell id="act" value="3. ACT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d1b2e;strokeColor=#ff6b9d;fontColor=#ffffff;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="320" width="180" height="45" />
+        </mxCell>
+        <mxCell id="actsub" value="Ejecutar tool call o responder" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#aaa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="420" y="365" width="180" height="18" />
+        </mxCell>
+
+        <!-- Step 4: Observe -->
+        <mxCell id="observe" value="4. OBSERVE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f3460;strokeColor=#16213e;fontColor=#ffffff;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="410" width="180" height="45" />
+        </mxCell>
+        <mxCell id="obssub" value="Evaluar resultado, medir éxito" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#aaa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="420" y="455" width="180" height="18" />
+        </mxCell>
+
+        <!-- Decision: Success? -->
+        <mxCell id="diamond" value="¿Éxito?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#fbbf24;fontColor=#ffffff;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="445" y="480" width="130" height="65" />
+        </mxCell>
+
+        <!-- Yes path -->
+        <mxCell id="yeslabel" value="Sí" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#4ade80;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="600" y="500" width="40" height="20" />
+        </mxCell>
+        <mxCell id="yesedge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4ade80;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="575" y="512" />
+            <mxPoint x="720" y="512" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Learn / Improve -->
+        <mxCell id="learn" value="5. LEARN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4a2a;strokeColor=#4ade80;fontColor=#ffffff;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="720" y="490" width="180" height="45" />
+        </mxCell>
+        <mxCell id="learnsub" value="Crear skill, actualizar training" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#aaa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="720" y="535" width="180" height="18" />
+        </mxCell>
+
+        <!-- Output -->
+        <mxCell id="output" value="Output / Respuesta final" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e94560;strokeColor=#c23152;fontColor=#ffffff;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="720" y="580" width="180" height="40" />
+        </mxCell>
+
+        <!-- No path: loop back -->
+        <mxCell id="nolabel" value="No (iterar)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#e94560;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="350" y="500" width="80" height="20" />
+        </mxCell>
+        <mxCell id="noedge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e94560;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="445" y="500" />
+            <mxPoint x="310" y="500" />
+            <mxPoint x="310" y="162" />
+            <mxPoint x="420" y="162" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Max iterations label -->
+        <mxCell id="maxiter" value="Máx 8 iteraciones" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#e94560;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="280" y="460" width="120" height="20" />
+        </mxCell>
+
+        <!-- Vertical arrows between steps -->
+        <mxCell id="i2p" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4ade80;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="510" y="105" />
+            <mxPoint x="510" y="140" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2t" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#a78bfa;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="510" y="185" />
+            <mxPoint x="510" y="230" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t2a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ff6b9d;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="510" y="275" />
+            <mxPoint x="510" y="320" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a2o" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#fbbf24;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="510" y="365" />
+            <mxPoint x="510" y="410" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o2d" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#fbbf24;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="510" y="455" />
+            <mxPoint x="510" y="480" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2o" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4ade80;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1">
+            <mxPoint x="810" y="535" />
+            <mxPoint x="810" y="580" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
