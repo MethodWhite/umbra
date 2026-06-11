@@ -1,7 +1,7 @@
 use anyhow::{Result, anyhow};
 use std::sync::Arc;
 use synapsis::infrastructure::database::Database;
-use synapsis::{Memory, MemoryPort, SessionId, StoragePort};
+use synapsis::{Memory, SessionId};
 
 const DEFAULT_SEARCH_LIMIT: usize = 5;
 

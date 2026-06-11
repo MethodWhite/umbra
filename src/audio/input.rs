@@ -3,6 +3,7 @@ use std::sync::mpsc::{self, Receiver};
 use std::sync::{Arc, Mutex};
 
 /// Captures audio from microphone and detects speech
+#[allow(dead_code)]
 pub struct VoiceInput {
     stream: Option<cpal::Stream>,
     audio_rx: Receiver<Vec<f32>>,

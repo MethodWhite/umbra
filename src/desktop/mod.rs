@@ -1,3 +1,4 @@
+#![allow(deprecated)]
 use eframe::egui::{self, Color32, Vec2, RichText, Button, Stroke, Pos2, Align2, FontId, Rect, Rounding, TextEdit, scroll_area::ScrollBarVisibility};
 use std::time::Instant;
 use std::collections::HashMap;
@@ -6,7 +7,6 @@ use crate::agent_memory::{AgentMemory, CognitiveBehavior, EmotionalState};
 use crate::agent_personality::*;
 
 const HOVER_PURPLE: Color32 = Color32::from_rgba_premultiplied(167, 139, 250, 40);
-const PANEL_BORDER: Color32 = Color32::from_rgba_premultiplied(0, 200, 255, 60);
 
 #[derive(Default, PartialEq, Clone, Debug)]
 pub enum View { #[default] Hud, Trading, Conversations }
@@ -18,6 +18,7 @@ pub enum State { #[default] Idle, Listening, Thinking, Working, Speaking }
 struct Message { sender: String, text: String, is_user: bool }
 
 #[derive(Clone)]
+#[allow(dead_code)]
 struct Conversation { id: usize, title: String, messages: Vec<Message> }
 
 struct ShortcutEntry { action: String, key: String, recording: bool }
@@ -25,6 +26,7 @@ struct ShortcutEntry { action: String, key: String, recording: bool }
 struct ProviderEntry { name: String, configured: bool, key: String }
 struct AgentEntry { name: String, active: bool, agent_type: String, gender: AiGender }
 
+#[allow(dead_code)]
 pub struct App {
     view: View, state: State, start: Instant, frames: u64,
     sidebar_open: bool, sidebar_tab: usize, settings_tab: usize, vault_open: bool,
@@ -77,13 +79,6 @@ pub struct App {
 
 const TRADING_FILTERS: &[&str] = &["All", "Forex", "Crypto", "Commodities", "Indices"];
 const TRADING_STRATEGIES: &[&str] = &["144K Method", "3.4 Unification", "Manual"];
-const SYMBOL_SETS: &[&[&str]] = &[
-    &["EURUSD", "GBPUSD", "BTCUSD", "XAUUSD", "SP500"],
-    &["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "NZDUSD"],
-    &["BTCUSD", "ETHUSD", "SOLUSD", "XRPUSD", "ADAUSD"],
-    &["XAUUSD", "XAGUSD", "USOIL", "NGAS", "COPPER"],
-    &["SP500", "NASDAQ", "DOW30", "FTSE100", "DAX40"],
-];
 
 impl Default for App {
     fn default() -> Self {
@@ -353,6 +348,7 @@ impl App {
         }
     }
 
+    #[allow(dead_code)]
     fn send_hud_message(&mut self) {
         let text = self.hud_input.trim().to_string();
         if text.is_empty() { return; }
@@ -570,7 +566,7 @@ impl App {
         }
     }
 
-    fn render_hud_view(&mut self, ui: &mut egui::Ui, r: Rect, t: f32, sphere_cx: f32, sphere_cy: f32, primary: Color32) {
+    fn render_hud_view(&mut self, ui: &mut egui::Ui, _r: Rect, t: f32, sphere_cx: f32, sphere_cy: f32, _primary: Color32) {
         let hue = self.current_emotion.hue();
         let sat = self.current_emotion.saturation();
         let intensity = self.current_emotion.intensity();
@@ -741,7 +737,7 @@ impl App {
         let seed = self.frames as f64 * 0.1;
         let prices: Vec<f64> = (0..n_points).map(|i| {
             let angle = (i as f64 + seed) * 0.3;
-            let noise = (angle.sin() * 0.5 + (angle * 2.3).sin() * 0.3 + (angle * 5.7).sin() * 0.2);
+            let noise = angle.sin() * 0.5 + (angle * 2.3).sin() * 0.3 + (angle * 5.7).sin() * 0.2;
             base_price * (1.0 + noise * volatility)
         }).collect();
 

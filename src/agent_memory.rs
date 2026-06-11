@@ -498,7 +498,7 @@ impl AgentMemory {
         let home = std::env::var("HOME").unwrap_or_else(|_| "/tmp".into());
         let path = PathBuf::from(home).join(".umbra/agent_memory.json");
         let storage = Mutex::new(HashMap::new());
-        let mut mem = AgentMemory { storage, path };
+        let mem = AgentMemory { storage, path };
         let _ = mem.load_from_disk();
         mem
     }
@@ -572,7 +572,7 @@ impl AgentMemory {
         self.save_to_disk()
     }
 
-    pub fn register_synapsis_session(&self, agent_id: &str, project_key: &str) -> Result<String, String> {
+    pub fn register_synapsis_session(&self, agent_id: &str, _project_key: &str) -> Result<String, String> {
         let session_id = format!("agent_{}_{}", agent_id, Self::now());
         if let Ok(mut storage) = self.storage.lock() {
             if let Some(agent) = storage.get_mut(agent_id) {

@@ -18,6 +18,7 @@ fn resolve_safe(path: &Path, sandbox: &Path) -> Result<PathBuf, String> {
 }
 
 /// File system operations for project navigation (sandboxed)
+#[allow(dead_code)]
 pub struct FileSystem {
     current_dir: PathBuf,
     home_dir: PathBuf,

@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use std::sync::LazyLock;
 
 use crate::domain::models::{VoiceSettings, Preferences, CustomizationBody};
-use crate::domain::ports::VaultRepository;
+
 use crate::application::settings::{GetVoiceUseCase, SaveVoiceUseCase, GetSettingsStatusUseCase};
 use crate::infrastructure::repositories::TomlSettingsRepository;
 use crate::infrastructure::persistence::derive_customization_key;

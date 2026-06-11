@@ -3,7 +3,7 @@ use crate::domain::ports::tts_port::TtsPort;
 pub struct FishTtsAdapter;
 
 impl TtsPort for FishTtsAdapter {
-    fn synthesize(&self, text: &str, voice: &str) -> Result<Vec<u8>, String> {
+    fn synthesize(&self, _text: &str, _voice: &str) -> Result<Vec<u8>, String> {
         todo!("Implement Fish TTS synthesis")
     }
 

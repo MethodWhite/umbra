@@ -130,7 +130,7 @@ pub fn call_mt5(method: &str, params: &str) -> anyhow::Result<String> {
     }
     let c_str = unsafe { std::ffi::CStr::from_ptr(result) };
     let response = c_str.to_str()?.to_string();
-    unsafe { umbra_free_string(result) };
+    umbra_free_string(result);
     Ok(response)
 }
 

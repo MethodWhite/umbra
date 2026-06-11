@@ -9,6 +9,8 @@ const ANTHROPIC_API_VERSION: &str = "2023-06-01";
 const OPENCODE_GO_ID: &str = "opencode-go";
 const OPENCODE_GO_BASE_URL: &str = "https://opencode.ai/zen/go/v1";
 const HTTP_TIMEOUT_SECONDS: u64 = 60;
+/// Internal vault port
+#[allow(dead_code)]
 const INTERNAL_VAULT_PORT: u16 = 8340;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

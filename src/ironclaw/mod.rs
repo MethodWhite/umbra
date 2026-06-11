@@ -13,6 +13,7 @@ pub struct IronClaw {
 }
 
 #[derive(Clone)]
+#[allow(dead_code)]
 struct Constraints {
     max_positions: u32,
     max_daily_loss_pct: f64,

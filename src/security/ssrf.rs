@@ -1,4 +1,4 @@
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, ToSocketAddrs};
+use std::net::{IpAddr, Ipv4Addr, ToSocketAddrs};
 
 static BLOCKED_HOSTS: &[&str] = &[
     "169.254.169.254",

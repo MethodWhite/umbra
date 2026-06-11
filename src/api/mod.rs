@@ -8,7 +8,6 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-use crate::domain::ports::VaultRepository;
 use crate::infrastructure::repositories::EncryptedVaultRepository;
 
 #[derive(Clone)]
