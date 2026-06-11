@@ -80,6 +80,15 @@ User Input ──Zone 1──> Desktop UI
                     └──Zone 4──> RAG over Synapsis memory (token-budgeted)
 ```
 
+### Note: `infra/` vs `infrastructure/`
+
+These are distinct modules, NOT duplicates:
+
+- **`infra/`** (Zone 6) — System-level infrastructure: hardening (`OpenVentus`), backup, filesystem, ghost monitoring. Server-gated, not compiled for desktop.
+- **`infrastructure/`** (Zone 4) — Application-level infrastructure: HTTP clients (Ollama, STT, TTS), persistence (vault repos), TTS/STT adapters, security (IronClaw, Thoth). Server-gated behind `--features server`.
+
+They serve different layers and should remain separate.
+
 ## Quick Evaluation
 
 ```bash
