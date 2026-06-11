@@ -7,10 +7,7 @@ db-urls = ["https://github.com/rustsec/advisory-db"]
 unmaintained = "workspace"
 unsound = "transitive"
 yanked = "deny"
-ignore = [
-    "RUSTSEC-2025-0057",  # fxhash unmaintained — still transitive via wasmtime profiling (fxprof-processed-profile)
-    "RUSTSEC-2024-0436",  # paste unmaintained — still transitive via wasmtime/eframe (GUI stack)
-]
+ignore = []
 
 [licenses]
 allow = [
