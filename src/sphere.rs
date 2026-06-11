@@ -1,3 +1,4 @@
+// Zone 1 — Desktop/UI
 use eframe::egui::{Color32, Pos2};
 use std::f32::consts::PI;
 

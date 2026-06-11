@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use anyhow::Result;
 
 const GPU_THROTTLE_TEMP_C: f32 = 85.0;

@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 use crate::domain::ports::cybersecurity_port::{CybersecurityPort, ThreatAssessment};
 
 pub struct IronclawAdapter;

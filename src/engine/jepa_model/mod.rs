@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use anyhow::{Result, anyhow};
 use base64::Engine;
 use serde::{Deserialize, Serialize};

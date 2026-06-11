@@ -1,3 +1,4 @@
+// Zone 1 — Desktop/UI
 /// Agent Personality System
 /// 
 /// Defines AI gender, voice, and personality traits.

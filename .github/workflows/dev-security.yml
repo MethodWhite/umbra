@@ -1,0 +1,34 @@
+name: Dev Security (Zone Compliance)
+
+on: [push, pull_request]
+
+jobs:
+  zone-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Zone Annotations
+        run: |
+          echo "=== Zone 0 (Config) ==="
+          grep -rl "// Zone 0" src/ | sort
+          echo "=== Zone 1 (Desktop/UI) ==="
+          grep -rl "// Zone 1" src/ | sort
+          echo "=== Zone 2 (Domain) ==="
+          grep -rl "// Zone 2" src/ | sort
+          echo "=== Zone 3 (Application) ==="
+          grep -rl "// Zone 3" src/ | sort
+          echo "=== Zone 4 (Infrastructure) ==="
+          grep -rl "// Zone 4" src/ | sort
+          echo "=== Zone 5 (Bridge) ==="
+          grep -rl "// Zone 5" src/ | sort
+          echo "=== Zone 6 (Research) ==="
+          grep -rl "// Zone 6" src/ | sort
+      - name: Check Cross-Zone Imports (Zone 2 must not import Zone 3+)
+        run: |
+          imports_from_upper=$(grep -rn "use crate::application\|use crate::infrastructure\|use crate::api\|use crate::desktop" src/domain/ --include="*.rs" 2>/dev/null || true)
+          if [ -n "$imports_from_upper" ]; then
+            echo "ERROR: Zone 2 (domain) imports from upper layers:"
+            echo "$imports_from_upper"
+            exit 1
+          fi
+          echo "✅ Zone 2: no upper-layer imports"

@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 use crate::domain::models::security::Identity;
 use crate::domain::ports::voice_id_port::VoiceIdPort;
 

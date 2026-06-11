@@ -1,3 +1,4 @@
+// Zone 5 — Bridge/External
 pub mod enforcer;
 pub mod pqc;
 pub mod zt_gate;

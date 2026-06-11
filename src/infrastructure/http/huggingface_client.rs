@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 const HF_API_BASE: &str = "https://huggingface.co/api/models";
 
 pub struct HuggingFaceClient;

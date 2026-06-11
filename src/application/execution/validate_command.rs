@@ -1,3 +1,4 @@
+// Zone 3 — Application
 pub struct ValidateCommandUseCase;
 
 impl ValidateCommandUseCase {

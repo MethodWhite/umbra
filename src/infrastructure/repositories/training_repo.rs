@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 use std::path::PathBuf;
 
 use crate::domain::models::TrainingExample;

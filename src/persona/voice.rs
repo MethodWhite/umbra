@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 #[derive(Clone)]
 pub struct VoiceEngine;
 

@@ -1,3 +1,4 @@
+// Zone 5 — Bridge/External
 /// NOTE: This module provides conventional AES-256-GCM encryption + HMAC-SHA256.
 /// Post-quantum cryptography (CRYSTALS-Kyber/Dilithium) is not yet implemented.
 /// The pqc-crypto crate was removed due to broken implementation.

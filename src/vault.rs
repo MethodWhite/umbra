@@ -1,3 +1,4 @@
+// Zone 1 — Desktop/UI
 use std::path::PathBuf;
 use std::sync::Mutex;
 

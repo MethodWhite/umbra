@@ -1,3 +1,4 @@
+// Zone 1 — Desktop/UI
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, VecDeque};
 use std::path::PathBuf;

@@ -1,3 +1,4 @@
+// Zone 3 — Application
 use crate::domain::models::emotion::EmotionalState;
 
 pub struct GenerateToneUseCase;

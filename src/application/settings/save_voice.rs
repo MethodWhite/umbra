@@ -1,3 +1,4 @@
+// Zone 3 — Application
 use crate::domain::models::VoiceSettings;
 use crate::domain::ports::SettingsRepository;
 use crate::domain::errors::AppError;

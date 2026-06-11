@@ -1,3 +1,4 @@
+// Zone 5 — Bridge/External
 use sha2::{Sha256, Digest};
 use hmac::{Hmac, Mac};
 use chrono::Utc;

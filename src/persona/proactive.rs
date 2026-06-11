@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use std::time::Duration;
 use tokio::time;
 

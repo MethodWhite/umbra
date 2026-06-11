@@ -1,3 +1,4 @@
+// Zone 2 — Domain/Ports
 pub mod cybersecurity_port;
 pub mod execution_port;
 pub mod language_port;

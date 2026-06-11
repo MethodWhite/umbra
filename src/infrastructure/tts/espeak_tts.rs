@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 use crate::domain::ports::tts_port::TtsPort;
 
 pub struct EspeakTtsAdapter;

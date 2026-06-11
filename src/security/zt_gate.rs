@@ -1,3 +1,4 @@
+// Zone 5 — Bridge/External
 use anyhow::Result;
 use std::fs;
 use std::os::unix::fs::PermissionsExt;

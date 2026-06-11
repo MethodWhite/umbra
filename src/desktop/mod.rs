@@ -651,7 +651,7 @@ impl App {
     }
 
     fn render_trading_view(&mut self, ui: &mut egui::Ui, r: Rect, t: f32, primary: Color32) {
-        let left_panel_w = 180.0;
+        let left_panel_w = (r.width() * 0.15).max(140.0).min(220.0);
         let right_panel_w = r.width() - left_panel_w - 20.0;
 
         let top_bar_rect = Rect::from_min_size(Pos2::new(r.left() + 10.0, r.top() + 5.0), Vec2::new(r.width() - 20.0, 36.0));
@@ -939,7 +939,7 @@ impl App {
     fn render_conversations_view(&mut self, ui: &mut egui::Ui, r: Rect, alpha: u8, primary: Color32) {
         ui.painter().rect_filled(r, Rounding::ZERO, Color32::from_rgba_premultiplied(0, 4, 12, alpha));
 
-        let side_panel_w = 180.0;
+        let side_panel_w = (r.width() * 0.18).max(140.0).min(240.0);
 
         let list_rect = Rect::from_min_size(Pos2::new(r.left() + 5.0, r.top() + 5.0), Vec2::new(side_panel_w, r.height() - 50.0));
         ui.painter().rect_filled(list_rect, Rounding::same(6.0), Color32::from_rgba_premultiplied(0, 8, 20, 200));

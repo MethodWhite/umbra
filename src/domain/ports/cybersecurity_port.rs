@@ -1,3 +1,4 @@
+// Zone 2 — Domain/Ports
 pub struct ThreatAssessment {
     pub is_threat: bool,
     pub threat_level: ThreatLevel,

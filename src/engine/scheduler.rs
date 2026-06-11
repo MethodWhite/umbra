@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use anyhow::{Context, Result};
 
 const KILOBYTES_PER_MEGABYTE: u64 = 1024;

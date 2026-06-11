@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use anyhow::Result;
 
 const OLLAMA_TAGS_URL: &str = "http://localhost:11434/api/tags";

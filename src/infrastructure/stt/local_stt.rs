@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 use crate::domain::models::voice::Transcription;
 use crate::domain::ports::stt_port::SttPort;
 

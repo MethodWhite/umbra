@@ -1,3 +1,4 @@
+// Zone 5 — Bridge/External
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

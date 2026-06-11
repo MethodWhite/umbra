@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::time::{Duration, Instant};

@@ -1,3 +1,4 @@
+// Zone 5 — Bridge/External
 use std::ffi::{CStr, CString};
 use std::sync::{Mutex, MutexGuard, OnceLock};
 

@@ -1,3 +1,4 @@
+// Zone 1 — Desktop/UI
 use anyhow::Result;
 use serde::Serialize;
 use std::sync::Arc;

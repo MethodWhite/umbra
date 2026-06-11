@@ -1,3 +1,4 @@
+// Zone 5 — Bridge/External
 pub mod ffi;
 pub mod signals;
 pub mod executor;

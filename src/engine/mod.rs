@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 pub mod jepa;
 pub mod router;
 pub mod memory;

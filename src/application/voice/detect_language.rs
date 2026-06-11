@@ -1,3 +1,4 @@
+// Zone 3 — Application
 use crate::domain::ports::language_port::{LanguagePort, LanguageResult};
 
 pub struct DetectLanguageUseCase;

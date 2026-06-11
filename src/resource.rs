@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use anyhow::Result;
 use std::collections::HashMap;
 use std::time::Instant;

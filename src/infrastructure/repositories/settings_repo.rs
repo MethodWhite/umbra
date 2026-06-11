@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 use std::os::unix::fs::PermissionsExt;
 use std::path::PathBuf;
 

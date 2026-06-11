@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use serde::Serialize;
 use std::collections::{BTreeMap, VecDeque};
 use std::sync::atomic::AtomicBool;

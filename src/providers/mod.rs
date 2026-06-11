@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 use anyhow::{Context, Result};
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, CONTENT_TYPE};
 use serde::{Deserialize, Serialize};

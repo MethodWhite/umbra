@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 pub mod filesystem;
 pub mod hardening;
 pub mod ghost;

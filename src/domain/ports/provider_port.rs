@@ -1,3 +1,4 @@
+// Zone 2 — Domain/Ports
 use std::collections::HashMap;
 
 use crate::domain::models::{ApiProvider, ALL_PROVIDERS};

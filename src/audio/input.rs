@@ -1,3 +1,4 @@
+// Zone 1 — Desktop/UI
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use std::sync::mpsc::{self, Receiver};
 use std::sync::{Arc, Mutex};

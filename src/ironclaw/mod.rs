@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 

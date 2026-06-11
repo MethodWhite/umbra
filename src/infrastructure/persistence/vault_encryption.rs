@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 use aes_gcm::{Aes256Gcm, Key, Nonce};
 use aes_gcm::aead::{Aead, KeyInit};
 use pbkdf2::pbkdf2_hmac;

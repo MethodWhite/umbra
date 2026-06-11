@@ -1,3 +1,4 @@
+// Zone 5 — Bridge/External
 use std::collections::VecDeque;
 use super::types::Signal;
 

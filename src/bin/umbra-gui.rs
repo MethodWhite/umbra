@@ -1,3 +1,4 @@
+// Zone 0 — Config/Init
 fn main() -> eframe::Result<()> {
     let app = umbra::desktop::App::default();
     let options = eframe::NativeOptions {

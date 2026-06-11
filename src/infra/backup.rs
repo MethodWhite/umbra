@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 

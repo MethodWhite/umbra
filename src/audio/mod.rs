@@ -1,3 +1,4 @@
+// Zone 1 — Desktop/UI
 pub mod input;
 pub mod playback;
 pub mod vad;

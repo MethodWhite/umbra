@@ -1,3 +1,4 @@
+// Zone 2 — Domain/Ports
 use crate::domain::models::trading::Order;
 
 pub enum ExecutionResult {

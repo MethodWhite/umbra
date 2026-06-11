@@ -1,3 +1,4 @@
+// Zone 3 — Application
 use crate::domain::models::ApiProvider;
 
 pub struct TestConnectionUseCase;

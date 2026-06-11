@@ -1,3 +1,4 @@
+// Zone 2 — Domain/Ports
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;

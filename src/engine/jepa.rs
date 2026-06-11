@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use anyhow::{Context, Result, anyhow};
 use serde_json::json;
 use super::scheduler::Backend;

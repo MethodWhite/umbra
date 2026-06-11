@@ -1,3 +1,4 @@
+// Zone 3 — Application
 use crate::domain::ports::execution_port::{ExecutionPort, ExecutionResult};
 
 pub struct ExecuteCommandUseCase;

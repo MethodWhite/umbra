@@ -1,3 +1,4 @@
+// Zone 3 — Application
 pub mod configure;
 pub mod test_connection;
 pub mod get_status;

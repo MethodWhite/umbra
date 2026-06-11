@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

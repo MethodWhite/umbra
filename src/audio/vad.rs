@@ -1,3 +1,4 @@
+// Zone 1 — Desktop/UI
 pub struct VoiceActivityDetector {
     energy_threshold: f32,
     min_speech_frames: u32,

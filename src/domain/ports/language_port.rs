@@ -1,3 +1,4 @@
+// Zone 2 — Domain/Ports
 pub struct LanguageResult {
     pub language: String,
     pub confidence: f32,

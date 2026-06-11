@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 use crate::domain::errors::AppError;
 use futures::StreamExt;
 

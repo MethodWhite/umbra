@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use anyhow::{Result, anyhow};
 use std::sync::Arc;
 use tokio::sync::mpsc;

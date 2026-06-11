@@ -1,3 +1,4 @@
+// Zone 4 — Infrastructure
 /// Simple STT client that can use Whisper.cpp locally or API-based STT
 use reqwest::Client;
 

@@ -1,3 +1,4 @@
+// Zone 3 — Application
 use crate::domain::ports::VaultRepository;
 use crate::domain::errors::AppError;
 

@@ -1,3 +1,4 @@
+// Zone 3 — Application
 use crate::domain::ports::tts_port::TtsPort;
 
 pub struct SynthesizeSpeechUseCase;

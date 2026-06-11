@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 use std::path::{Path, PathBuf};
 
 fn resolve_safe(path: &Path, sandbox: &Path) -> Result<PathBuf, String> {

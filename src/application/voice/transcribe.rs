@@ -1,3 +1,4 @@
+// Zone 3 — Application
 use crate::domain::models::voice::Transcription;
 use crate::domain::ports::stt_port::SttPort;
 

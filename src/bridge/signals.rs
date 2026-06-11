@@ -1,3 +1,4 @@
+// Zone 5 — Bridge/External
 use anyhow::{Result, anyhow};
 use super::types::Signal;
 use std::sync::atomic::{AtomicU64, Ordering};

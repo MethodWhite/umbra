@@ -1,3 +1,4 @@
+// Zone 6 — Research/Stubs (server-gated)
 pub mod agent_loop;
 pub mod skills;
 pub mod trainer;
