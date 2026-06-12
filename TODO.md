@@ -3,32 +3,26 @@
 ## Build
 - Desktop: `cargo build --release --bin umbra-gui` ✅ 0 errors, 0 warnings
 - Server: `cargo build --release --bin umbra --features server` ✅
-- Tests: `cargo test --lib` ✅ 47 passed, 0 failed
-- Security: `cargo deny check` ✅ advisories ok, bans ok, licenses ok, sources ok
+- Synapsis: `cargo build --release --bin synapsis-mcp` ✅
 
-## Completado
-- [x] STT: whisper.cpp client + mic button en HUD
-- [x] Market data: MarketDataClient (simulated + Twelve Data API)
-- [x] Responsive UI: layouts adaptativos (porcentuales con min/max)
-- [x] Voice clone: CloneVoiceUseCase con análisis de audio PCM
-- [x] Agent orchestration: AgentOrchestrator con scoring + selección
-- [x] Zone annotations: 133+ archivos anotados con zona de desarrollo
-- [x] Gentlemen Programming: DEVELOPMENT.md con sistema de zonas
-- [x] Dev-security CI: .github/workflows/dev-security.yml
-- [x] desktop/ partitioning: mod.rs + helpers.rs + panels.rs + actions.rs
-- [x] Tests: 47 tests — memory, config, vault, ai_client, agent_personality, sphere, agent_memory
-- [x] Synapsis-core: token-efficient memory con summary, importance, budgets (11 tests)
-- [x] Legacy cleanup: removed crates/openjarvis (no era dependencia Rust)
-- [x] infra/ vs infrastructure/ documentado (capas distintas)
-- [x] Path expansion fix: config_path uses HOME env, no raw tilde
-- [x] Async tests: OllamaClient with_url, MarketDataClient quote, error handling
+## Tests: **107 total**
+- umbra: 47 tests
+- synapsis: 34 tests
+- synapsis-core: 26 tests (22 unit + 4 benchmarks)
 
-## Cómo compilar
-```bash
-cargo build --release --bin umbra-gui           # Desktop
-cargo build --release --bin umbra --features server  # Server
-cargo test --lib                                      # Tests
-cargo deny check                                      # Security
-```
+## Benchmarks (synapsis-core)
+- Token efficiency: summary is **31%** of full content
+- Search speed: **754µs** avg per query
+- Token budget: **85% reduction** with tight budget
+- Semantic search: related results rank **10x higher**
 
-No warnings. No errors.
+## CI/CD
+- GitHub Actions: check + test + server + deny ✅
+- Dependabot: weekly cargo, monthly actions ✅
+- License: Umbra MIT, Synapsis BUSL-1.1 ✅
+- Templates: CONTRIBUTING, CODE_OF_CONDUCT, ISSUE/PR templates ✅
+
+## Assets
+- Logo SVG (Umbra + Synapsis) ✅
+- Architecture diagram SVG ✅
+- Badges in README ✅

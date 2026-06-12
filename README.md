@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/rust-1.85+-orange?logo=rust" alt="Rust"/>
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="License"/>
   <img src="https://img.shields.io/github/v/release/MethodWhite/umbra?include_prereleases&label=version" alt="Version"/>
-  <img src="https://img.shields.io/badge/tests-47-passing-green" alt="Tests"/>
+  <img src="https://img.shields.io/badge/tests-103%20total-passing-green" alt="Tests"/>
   <img src="https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-lightgrey" alt="Platform"/>
   <img src="https://img.shields.io/badge/GUI-egui-CC00FF" alt="GUI"/>
 </p>

@@ -27,7 +27,7 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libasound2-dev libsqlcipher-dev
+        sudo apt-get install -y --no-install-recommends libwebkitgtk-6.0-dev libappindicator3-dev librsvg2-dev patchelf libasound2-dev libsqlcipher-dev
     - name: Check desktop
       run: cargo check --release --bin umbra-gui
 
@@ -48,7 +48,7 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libasound2-dev libsqlcipher-dev libxdo-dev
+        sudo apt-get install -y --no-install-recommends libwebkitgtk-6.0-dev libappindicator3-dev librsvg2-dev patchelf libasound2-dev libsqlcipher-dev libxdo-dev
     - name: Run tests
       run: cargo test --lib
     - name: Run synapsis-core tests
@@ -71,7 +71,7 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsqlcipher-dev
+        sudo apt-get install -y --no-install-recommends libsqlcipher-dev
     - name: Build server
       run: cargo build --release --bin umbra --features server
 
