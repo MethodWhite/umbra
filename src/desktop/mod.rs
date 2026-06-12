@@ -330,16 +330,25 @@ impl eframe::App for App {
 impl App {
     fn load_logo_texture(&mut self, ctx: &egui::Context) {
         if self.logo_texture.is_some() { return; }
-        if let Some(home) = dirs::home_dir() {
-            let path = home.join(".local/share/icons/hicolor/128x128/apps/umbra.png");
-            if let Ok(img_data) = std::fs::read(&path) {
+        // Try multiple locations for the logo
+        let paths = [
+            dirs::home_dir().map(|h| h.join(".local/share/icons/hicolor/128x128/apps/umbra.png")),
+            Some(std::path::PathBuf::from("/usr/local/share/icons/hicolor/128x128/apps/umbra.png")),
+            Some(std::path::PathBuf::from("/usr/share/icons/hicolor/128x128/apps/umbra.png")),
+            Some(std::path::PathBuf::from("umbra.png")),
+        ];
+        for path in paths.iter().flatten() {
+            if let Ok(img_data) = std::fs::read(path) {
                 if let Ok(img) = image::load_from_memory(&img_data) {
                     let rgba = img.to_rgba8();
                     let (w, h) = rgba.dimensions();
-                    let pixels = rgba.into_raw();
-                    let color_img = egui::ColorImage::from_rgba_unmultiplied([w as usize, h as usize], &pixels);
-                    let handle = ctx.load_texture("umbra_logo", color_img, egui::TextureOptions::LINEAR);
-                    self.logo_texture = Some(handle);
+                    if w > 0 && h > 0 {
+                        let pixels = rgba.into_raw();
+                        let color_img = egui::ColorImage::from_rgba_unmultiplied([w as usize, h as usize], &pixels);
+                        let handle = ctx.load_texture("umbra_logo", color_img, egui::TextureOptions::LINEAR);
+                        self.logo_texture = Some(handle);
+                        return;
+                    }
                 }
             }
         }
