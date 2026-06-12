@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <radialGradient id="sphereGrad" cx="50%" cy="45%" r="45%">
+      <stop offset="0%" stop-color="#00DCFF" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#00DCFF" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#A78BFA" stop-opacity="0.02"/>
+    </radialGradient>
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00DCFF" stop-opacity="0.15"/>
+      <stop offset="60%" stop-color="#A78BFA" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ringGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00DCFF" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#A78BFA" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#00DCFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ringGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#00DCFF" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ringGrad3" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#00DCFF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#A78BFA" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#00DCFF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowStrong">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowPulse">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="400" fill="#0A0A1A" rx="40"/>
+
+  <!-- Outer glow -->
+  <circle cx="200" cy="180" r="130" fill="url(#glowGrad)"/>
+
+  <!-- Orbital Ring 1 - horizontal ellipse -->
+  <ellipse cx="200" cy="180" rx="120" ry="40" fill="none" stroke="url(#ringGrad1)" stroke-width="1.5" transform="rotate(-15 200 180)"/>
+
+  <!-- Orbital Ring 2 - vertical ellipse -->
+  <ellipse cx="200" cy="180" rx="40" ry="120" fill="none" stroke="url(#ringGrad2)" stroke-width="1.5" transform="rotate(25 200 180)"/>
+
+  <!-- Orbital Ring 3 - angled -->
+  <ellipse cx="200" cy="180" rx="110" ry="30" fill="none" stroke="url(#ringGrad3)" stroke-width="1" transform="rotate(70 200 180)"/>
+
+  <!-- Neural connection network - horizontal -->
+  <g filter="url(#glow)" opacity="0.6">
+    <line x1="100" y1="140" x2="140" y2="160" stroke="#00DCFF" stroke-width="1"/>
+    <line x1="140" y1="160" x2="200" y2="180" stroke="#00DCFF" stroke-width="1"/>
+    <line x1="200" y1="180" x2="260" y2="200" stroke="#00DCFF" stroke-width="1"/>
+    <line x1="260" y1="200" x2="300" y2="220" stroke="#00DCFF" stroke-width="1"/>
+    <line x1="120" y1="200" x2="160" y2="190" stroke="#A78BFA" stroke-width="1"/>
+    <line x1="160" y1="190" x2="200" y2="180" stroke="#A78BFA" stroke-width="1"/>
+    <line x1="200" y1="180" x2="240" y2="170" stroke="#A78BFA" stroke-width="1"/>
+    <line x1="240" y1="170" x2="280" y2="160" stroke="#A78BFA" stroke-width="1"/>
+    <line x1="130" y1="170" x2="165" y2="175" stroke="#00DCFF" stroke-width="0.8"/>
+    <line x1="165" y1="175" x2="200" y2="180" stroke="#00DCFF" stroke-width="0.8"/>
+    <line x1="200" y1="180" x2="235" y2="185" stroke="#00DCFF" stroke-width="0.8"/>
+    <line x1="235" y1="185" x2="270" y2="190" stroke="#00DCFF" stroke-width="0.8"/>
+  </g>
+
+  <!-- Neural connections - vertical -->
+  <g filter="url(#glow)" opacity="0.5">
+    <line x1="180" y1="80" x2="185" y2="130" stroke="#A78BFA" stroke-width="0.8"/>
+    <line x1="185" y1="130" x2="200" y2="180" stroke="#A78BFA" stroke-width="1"/>
+    <line x1="200" y1="180" x2="215" y2="230" stroke="#A78BFA" stroke-width="1"/>
+    <line x1="215" y1="230" x2="220" y2="280" stroke="#A78BFA" stroke-width="0.8"/>
+  </g>
+
+  <!-- Central sphere body -->
+  <circle cx="200" cy="180" r="55" fill="url(#sphereGrad)" stroke="#00DCFF" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Sphere highlight -->
+  <ellipse cx="185" cy="165" rx="20" ry="12" fill="#00DCFF" opacity="0.12"/>
+  <ellipse cx="185" cy="165" rx="10" ry="6" fill="#00DCFF" opacity="0.2"/>
+
+  <!-- Node points on network -->
+  <g filter="url(#glowStrong)">
+    <!-- Cyan nodes -->
+    <circle cx="100" cy="140" r="3" fill="#00DCFF"/>
+    <circle cx="140" cy="160" r="2.5" fill="#00DCFF"/>
+    <circle cx="200" cy="180" r="4" fill="#00DCFF"/>
+    <circle cx="260" cy="200" r="2.5" fill="#00DCFF"/>
+    <circle cx="300" cy="220" r="3" fill="#00DCFF"/>
+    <circle cx="130" cy="170" r="2" fill="#00DCFF"/>
+    <circle cx="270" cy="190" r="2" fill="#00DCFF"/>
+    <!-- Purple nodes -->
+    <circle cx="120" cy="200" r="2.5" fill="#A78BFA"/>
+    <circle cx="160" cy="190" r="2" fill="#A78BFA"/>
+    <circle cx="240" cy="170" r="2" fill="#A78BFA"/>
+    <circle cx="280" cy="160" r="2.5" fill="#A78BFA"/>
+    <circle cx="180" cy="80" r="2.5" fill="#A78BFA"/>
+    <circle cx="220" cy="280" r="2.5" fill="#A78BFA"/>
+  </g>
+
+  <!-- Ring node glow points where rings intersect -->
+  <g filter="url(#glowPulse)">
+    <circle cx="158" cy="198" r="2" fill="#00DCFF" opacity="0.5"/>
+    <circle cx="242" cy="162" r="2" fill="#A78BFA" opacity="0.5"/>
+    <circle cx="200" cy="60" r="1.5" fill="#00DCFF" opacity="0.3"/>
+    <circle cx="200" cy="300" r="1.5" fill="#A78BFA" opacity="0.3"/>
+  </g>
+
+  <!-- Text -->
+  <text x="200" y="330" text-anchor="middle" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="48" font-weight="700" fill="#00DCFF" filter="url(#glow)">
+    UMBRA
+  </text>
+  <text x="200" y="358" text-anchor="middle" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" fill="#A78BFA" letter-spacing="6">
+    AI AGENT SYSTEM
+  </text>
+</svg>

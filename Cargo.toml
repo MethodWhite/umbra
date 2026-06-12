@@ -1,6 +1,6 @@
 [package]
 name = "umbra"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["methodwhite"]
 description = "UMBRA - AI Agent System for MT4 Automated Trading"
