@@ -1,0 +1,19 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Rust
+*.rs text diff=rust
+*.toml text
+*.lock text
+
+# Markdown
+*.md text
+
+# Assets
+*.svg text
+*.png binary
+*.ico binary
+
+# Git
+*.gitattributes text
+.gitignore text
