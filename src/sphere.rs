@@ -107,6 +107,7 @@ impl SphereRenderer {
         let rot_x = t * 0.2 * rot_speed * rot_x_ampl;
         let rot_z = t * 0.15 * rot_speed * rot_z_ampl;
 
+        // Duplicate of agent_memory::hsv_to_rgb — kept separate to avoid cross-crate dep
         let hue_to_rgb = |h: f32, s: f32, v: f32| -> (u8, u8, u8) {
             let h = h * 360.0;
             let s = s.clamp(0.0, 1.0);

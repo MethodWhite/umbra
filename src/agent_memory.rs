@@ -84,17 +84,6 @@ impl EmotionalState {
         }
     }
 
-    pub fn focused() -> Self {
-        Self {
-            primary: PrimaryEmotion::Anticipation,
-            intensity: EmotionIntensity::Medium,
-            secondary: Some(PrimaryEmotion::Trust),
-            valence: 0.4,
-            arousal: 0.7,
-            label: "Focused".into(),
-        }
-    }
-
     pub fn analytical() -> Self {
         Self {
             primary: PrimaryEmotion::Trust,
@@ -106,94 +95,6 @@ impl EmotionalState {
         }
     }
 
-    pub fn creative() -> Self {
-        Self {
-            primary: PrimaryEmotion::Joy,
-            intensity: EmotionIntensity::Medium,
-            secondary: Some(PrimaryEmotion::Surprise),
-            valence: 0.7,
-            arousal: 0.8,
-            label: "Creative".into(),
-        }
-    }
-
-    pub fn excited() -> Self {
-        Self {
-            primary: PrimaryEmotion::Joy,
-            intensity: EmotionIntensity::High,
-            secondary: Some(PrimaryEmotion::Anticipation),
-            valence: 0.9,
-            arousal: 0.95,
-            label: "Excited".into(),
-        }
-    }
-
-    pub fn sad() -> Self {
-        Self {
-            primary: PrimaryEmotion::Sadness,
-            intensity: EmotionIntensity::Medium,
-            secondary: None,
-            valence: -0.6,
-            arousal: 0.3,
-            label: "Sad".into(),
-        }
-    }
-
-    pub fn depressed() -> Self {
-        Self {
-            primary: PrimaryEmotion::Sadness,
-            intensity: EmotionIntensity::High,
-            secondary: None,
-            valence: -0.9,
-            arousal: 0.1,
-            label: "Depressed".into(),
-        }
-    }
-
-    pub fn angry() -> Self {
-        Self {
-            primary: PrimaryEmotion::Anger,
-            intensity: EmotionIntensity::Medium,
-            secondary: None,
-            valence: -0.7,
-            arousal: 0.9,
-            label: "Angry".into(),
-        }
-    }
-
-    pub fn anxious() -> Self {
-        Self {
-            primary: PrimaryEmotion::Fear,
-            intensity: EmotionIntensity::Medium,
-            secondary: Some(PrimaryEmotion::Anticipation),
-            valence: -0.4,
-            arousal: 0.8,
-            label: "Anxious".into(),
-        }
-    }
-
-    pub fn fearful() -> Self {
-        Self {
-            primary: PrimaryEmotion::Fear,
-            intensity: EmotionIntensity::Medium,
-            secondary: None,
-            valence: -0.6,
-            arousal: 0.85,
-            label: "Fearful".into(),
-        }
-    }
-
-    pub fn tired() -> Self {
-        Self {
-            primary: PrimaryEmotion::Sadness,
-            intensity: EmotionIntensity::Low,
-            secondary: None,
-            valence: -0.2,
-            arousal: 0.05,
-            label: "Tired".into(),
-        }
-    }
-
     pub fn curious() -> Self {
         Self {
             primary: PrimaryEmotion::Anticipation,
@@ -202,50 +103,6 @@ impl EmotionalState {
             valence: 0.5,
             arousal: 0.7,
             label: "Curious".into(),
-        }
-    }
-
-    pub fn surprised() -> Self {
-        Self {
-            primary: PrimaryEmotion::Surprise,
-            intensity: EmotionIntensity::Medium,
-            secondary: None,
-            valence: 0.1,
-            arousal: 0.9,
-            label: "Surprised".into(),
-        }
-    }
-
-    pub fn ashamed() -> Self {
-        Self {
-            primary: PrimaryEmotion::Sadness,
-            intensity: EmotionIntensity::Medium,
-            secondary: Some(PrimaryEmotion::Disgust),
-            valence: -0.5,
-            arousal: 0.4,
-            label: "Ashamed".into(),
-        }
-    }
-
-    pub fn flow() -> Self {
-        Self {
-            primary: PrimaryEmotion::Trust,
-            intensity: EmotionIntensity::High,
-            secondary: Some(PrimaryEmotion::Joy),
-            valence: 0.7,
-            arousal: 0.85,
-            label: "Flow".into(),
-        }
-    }
-
-    pub fn intuitive() -> Self {
-        Self {
-            primary: PrimaryEmotion::Trust,
-            intensity: EmotionIntensity::Medium,
-            secondary: Some(PrimaryEmotion::Surprise),
-            valence: 0.3,
-            arousal: 0.5,
-            label: "Intuitive".into(),
         }
     }
 
@@ -292,17 +149,6 @@ impl EmotionalState {
         self.arousal *= 0.7;
     }
 
-    pub fn cognitive_reset() -> Self {
-        EmotionalState {
-            primary: PrimaryEmotion::Joy,
-            intensity: EmotionIntensity::Low,
-            secondary: None,
-            valence: 0.3,
-            arousal: 0.2,
-            label: "Calm".to_string(),
-        }
-    }
-
     // ── Color helpers ──────────────────────────────────────────────────────
 
     pub fn color_hue(&self) -> f32 {
@@ -333,148 +179,12 @@ impl EmotionalState {
             base
         }
     }
-
-    pub fn to_color32(&self) -> egui::Color32 {
-        let hue = self.color_hue();
-        let sat = self.saturation();
-        let val = 0.5 + self.arousal * 0.4;
-        let (r, g, b) = hsv_to_rgb(hue, sat, val);
-        egui::Color32::from_rgb(r, g, b)
-    }
-
-    fn named(label: &str, primary: PrimaryEmotion, intensity: EmotionIntensity,
-              secondary: Option<PrimaryEmotion>, valence: f32, arousal: f32) -> Self {
-        Self { primary, intensity, secondary, valence, arousal, label: label.into() }
-    }
-
-    fn dyad(label: &str, a: PrimaryEmotion, ai: EmotionIntensity,
-             b: PrimaryEmotion, bi: EmotionIntensity, valence: f32, arousal: f32) -> Self {
-        let avg_int = match (ai as u8 + bi as u8) / 2 {
-            0..=1 => EmotionIntensity::Low,
-            2..=2 => EmotionIntensity::Medium,
-            _ => EmotionIntensity::High,
-        };
-        Self {
-            primary: a, intensity: avg_int, secondary: Some(b),
-            valence, arousal, label: label.into(),
-        }
-    }
-
-    pub fn all_emotions() -> Vec<EmotionalState> {
-        use PrimaryEmotion::*;
-        use EmotionIntensity::*;
-        let mut states = Vec::new();
-
-        // 24 basic emotions (8 primaries × 3 intensities)
-        let basics: Vec<(&str, PrimaryEmotion, f32, f32)> = vec![
-            ("Serenity", Joy, 0.6, 0.2), ("Joy", Joy, 0.8, 0.6), ("Ecstasy", Joy, 1.0, 1.0),
-            ("Acceptance", Trust, 0.5, 0.2), ("Trust", Trust, 0.7, 0.4), ("Admiration", Trust, 0.9, 0.7),
-            ("Apprehension", Fear, -0.3, 0.3), ("Fear", Fear, -0.6, 0.7), ("Terror", Fear, -1.0, 1.0),
-            ("Distraction", Surprise, 0.0, 0.3), ("Surprise", Surprise, 0.2, 0.7), ("Amazement", Surprise, 0.5, 1.0),
-            ("Pensiveness", Sadness, -0.3, 0.2), ("Sadness", Sadness, -0.6, 0.4), ("Grief", Sadness, -1.0, 0.8),
-            ("Boredom", Disgust, -0.2, 0.1), ("Disgust", Disgust, -0.6, 0.5), ("Loathing", Disgust, -0.9, 0.8),
-            ("Annoyance", Anger, -0.3, 0.4), ("Anger", Anger, -0.7, 0.8), ("Rage", Anger, -1.0, 1.0),
-            ("Interest", Anticipation, 0.3, 0.3), ("Anticipation", Anticipation, 0.5, 0.6), ("Vigilance", Anticipation, 0.7, 0.9),
-        ];
-        let intensities = [Low, Medium, High];
-        for (i, (label, prim, val, aro)) in basics.iter().enumerate() {
-            states.push(Self::named(label, *prim, intensities[i % 3], None, *val, *aro));
-        }
-
-        // Primary dyads (adjacent on the wheel)
-        let named_dyads: Vec<(&str, (PrimaryEmotion, f32, f32), (PrimaryEmotion, f32, f32))> = vec![
-            ("Love", (Joy, 0.9, 0.7), (Trust, 0.8, 0.5)),
-            ("Submission", (Trust, 0.3, 0.3), (Fear, 0.5, 0.6)),
-            ("Awe", (Fear, 0.4, 0.8), (Surprise, 0.5, 0.9)),
-            ("Disapproval", (Surprise, -0.2, 0.5), (Sadness, -0.4, 0.4)),
-            ("Remorse", (Sadness, -0.6, 0.4), (Disgust, -0.5, 0.5)),
-            ("Contempt", (Disgust, -0.7, 0.6), (Anger, -0.6, 0.7)),
-            ("Aggressiveness", (Anger, -0.5, 0.8), (Anticipation, 0.2, 0.8)),
-            ("Optimism", (Anticipation, 0.6, 0.7), (Joy, 0.8, 0.7)),
-        ];
-        for (label, (a, av, aa), (b, bv, ba)) in &named_dyads {
-            states.push(Self::dyad(label, *a, Medium, *b, Medium, (*av + *bv) / 2.0, (*aa + *ba) / 2.0));
-        }
-
-        // Secondary dyads (one step apart)
-        let secondary_dyads: Vec<(&str, PrimaryEmotion, PrimaryEmotion, f32, f32)> = vec![
-            ("Guilt", Joy, Fear, -0.1, 0.5),
-            ("Curiosity", Trust, Surprise, 0.3, 0.7),
-            ("Despair", Fear, Sadness, -0.7, 0.6),
-            ("Disbelief", Surprise, Disgust, 0.0, 0.6),
-            ("Envy", Sadness, Anger, -0.5, 0.5),
-            ("Cynicism", Disgust, Anticipation, -0.3, 0.4),
-            ("Pride", Anger, Joy, 0.2, 0.8),
-            ("Hope", Anticipation, Trust, 0.5, 0.6),
-        ];
-        for (label, a, b, v, aro) in &secondary_dyads {
-            states.push(Self::dyad(label, *a, Medium, *b, Medium, *v, *aro));
-        }
-
-        // Tertiary dyads (two steps apart)
-        let tertiary_dyads: Vec<(&str, PrimaryEmotion, PrimaryEmotion, f32, f32)> = vec![
-            ("Delight", Joy, Surprise, 0.7, 0.8),
-            ("Sentimentality", Trust, Sadness, 0.1, 0.3),
-            ("Shame", Fear, Disgust, -0.5, 0.4),
-            ("Outrage", Surprise, Anger, -0.3, 0.9),
-            ("Pessimism", Sadness, Anticipation, -0.3, 0.3),
-            ("Morbidness", Disgust, Joy, -0.2, 0.5),
-            ("Dominance", Anger, Trust, 0.0, 0.8),
-            ("Anxiety", Anticipation, Fear, -0.3, 0.7),
-        ];
-        for (label, a, b, v, aro) in &tertiary_dyads {
-            states.push(Self::dyad(label, *a, Medium, *b, Medium, *v, *aro));
-        }
-
-        // Additional dyads (all remaining C(8,2) = 28 total, we've covered 24, add the remaining 4)
-        let extra_dyads: Vec<(&str, PrimaryEmotion, PrimaryEmotion, f32, f32)> = vec![
-            ("Sullenness", Sadness, Joy, -0.2, 0.2),
-            ("Skepticism", Disgust, Trust, -0.3, 0.3),
-            ("Vengeance", Anger, Surprise, -0.4, 0.9),
-            ("Fatalism", Anticipation, Sadness, -0.2, 0.3),
-        ];
-        for (label, a, b, v, aro) in &extra_dyads {
-            states.push(Self::dyad(label, *a, Medium, *b, Medium, *v, *aro));
-        }
-
-        states
-    }
 }
 
 impl std::fmt::Display for EmotionalState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.label)
     }
-}
-
-// ── AI Gender Parameters ────────────────────────────────────────────────────
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
-pub enum AiGenderExpression {
-    Masculine,
-    Feminine,
-    Androgynous,
-    Neutral,
-}
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
-pub enum CommunicationStyle {
-    Analytical,
-    Intuitive,
-    Direct,
-    Expressive,
-    Balanced,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AiGenderIdentity {
-    pub gender: AiGenderExpression,
-    pub pronouns: String,
-    pub voice_pitch: f32,
-    pub voice_speed: f32,
-    pub communication_style: CommunicationStyle,
-    pub selected_at: u64,
-    pub finalized: bool,
 }
 
 // ── Performance History ─────────────────────────────────────────────────────
@@ -573,18 +283,6 @@ impl AgentMemory {
         self.save_to_disk()
     }
 
-    pub fn register_synapsis_session(&self, agent_id: &str, _project_key: &str) -> Result<String, String> {
-        let session_id = format!("agent_{}_{}", agent_id, Self::now());
-        if let Ok(mut storage) = self.storage.lock() {
-            if let Some(agent) = storage.get_mut(agent_id) {
-                agent.session_id = Some(session_id.clone());
-                agent.last_used = Self::now();
-            }
-        }
-        self.save_to_disk()?;
-        Ok(session_id)
-    }
-
     pub fn record_task_result(&self, id: &str, success: bool, response_time_ms: f64) -> Result<(), String> {
         if let Ok(mut storage) = self.storage.lock() {
             if let Some(agent) = storage.get_mut(id) {
@@ -656,85 +354,11 @@ impl Default for CognitiveBehavior {
     }
 }
 
-// ── Agent consultation system ───────────────────────────────────────────────
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ConsultationRequest {
-    pub from_agent: String,
-    pub topic: String,
-    pub context: String,
-    pub requested_at: u64,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ConsultationResponse {
-    pub from_agent: String,
-    pub opinion: String,
-    pub confidence: f32,
-    pub responded_at: u64,
-}
-
-impl ConsultationRequest {
-    pub fn new(from: &str, topic: &str, context: &str) -> Self {
-        Self {
-            from_agent: from.to_string(),
-            topic: topic.to_string(),
-            context: context.to_string(),
-            requested_at: SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CognitiveSession {
-    pub participants: Vec<String>,
-    pub topic: String,
-    pub exchanges: Vec<(String, String)>,
-    pub consensus_reached: bool,
-    pub started_at: u64,
-}
-
-impl CognitiveSession {
-    pub fn new(participants: Vec<String>, topic: &str) -> Self {
-        Self {
-            participants,
-            topic: topic.to_string(),
-            exchanges: Vec::new(),
-            consensus_reached: false,
-            started_at: SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs(),
-        }
-    }
-
-    pub fn add_exchange(&mut self, agent: &str, message: &str) {
-        self.exchanges.push((agent.to_string(), message.to_string()));
-    }
-
-    pub fn reach_consensus(&mut self) {
-        self.consensus_reached = true;
-    }
-}
-
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_hsv_to_rgb_black() {
-        assert_eq!(hsv_to_rgb(0.0, 0.0, 0.0), (0, 0, 0));
-    }
-
-    #[test]
-    fn test_hsv_to_rgb_white() {
-        assert_eq!(hsv_to_rgb(0.0, 0.0, 1.0), (255, 255, 255));
-    }
-
-    #[test]
-    fn test_hsv_to_rgb_red() {
-        let (r, g, b) = hsv_to_rgb(0.0, 1.0, 1.0);
-        assert_eq!((r, g, b), (255, 0, 0));
-    }
 
     #[test]
     fn test_emotional_state_calm() {
@@ -798,44 +422,6 @@ mod tests {
         assert!(memory.load("nonexistent").is_none());
     }
 
-    #[test]
-    fn test_cognitive_session_new() {
-        let session = CognitiveSession::new(vec!["agent1".into()], "test");
-        assert!(!session.consensus_reached);
-        assert!(session.exchanges.is_empty());
-    }
-
-    #[test]
-    fn test_cognitive_session_add_exchange() {
-        let mut session = CognitiveSession::new(vec!["agent1".into()], "test");
-        session.add_exchange("agent1", "hello");
-        assert_eq!(session.exchanges.len(), 1);
-    }
-
-    #[test]
-    fn test_cognitive_session_reach_consensus() {
-        let mut session = CognitiveSession::new(vec!["agent1".into()], "test");
-        session.reach_consensus();
-        assert!(session.consensus_reached);
-    }
 }
 
-fn hsv_to_rgb(h: f32, s: f32, v: f32) -> (u8, u8, u8) {
-    let h = h * 360.0;
-    let c = v * s;
-    let x = c * (1.0 - ((h / 60.0) % 2.0 - 1.0).abs());
-    let m = v - c;
-    let (r, g, b) = match h as i32 % 360 {
-        0..=59 => (c, x, 0.0),
-        60..=119 => (x, c, 0.0),
-        120..=179 => (0.0, c, x),
-        180..=239 => (0.0, x, c),
-        240..=299 => (x, 0.0, c),
-        _ => (c, 0.0, x),
-    };
-    (
-        ((r + m) * 255.0) as u8,
-        ((g + m) * 255.0) as u8,
-        ((b + m) * 255.0) as u8,
-    )
-}
+

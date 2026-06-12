@@ -11,7 +11,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use std::collections::HashMap;
 use crate::sphere::SphereRenderer;
-use crate::agent_memory::{AgentMemory, CognitiveBehavior, EmotionalState};
+use crate::agent_memory::{CognitiveBehavior, EmotionalState};
 use crate::agent_personality::*;
 use crate::ai_client::{OllamaClient, ChatMessage, SttClient, MarketDataClient, Quote};
 
@@ -43,7 +43,6 @@ pub struct App {
     theme: usize,
     primary_color_hex: String,
     main_sphere: SphereRenderer,
-    agent_memory: AgentMemory,
     current_emotion: EmotionalState,
     providers: Vec<ProviderEntry>, agents: Vec<AgentEntry>,
     cognitive: CognitiveBehavior,
@@ -103,7 +102,6 @@ impl Default for App {
             opacity: 0.85, muted: false, use_local_tts: false,
             theme: 0, primary_color_hex: "#00DCFF".into(),
             main_sphere: SphereRenderer::new(250),
-            agent_memory: AgentMemory::new(),
             current_emotion: EmotionalState::calm(),
             cognitive: CognitiveBehavior::new(),
             providers: vec![
@@ -426,32 +424,6 @@ impl App {
                 self.fish_api_detected = true;
             }
         }
-    }
-
-    #[allow(dead_code)]
-    fn send_hud_message(&mut self) {
-        let text = self.hud_input.trim().to_string();
-        if text.is_empty() { return; }
-        self.hud_input.clear();
-
-        let idx = if let Some(idx) = self.selected_conv {
-            if idx < self.conversations.len() { idx } else {
-                self.conv_counter += 1;
-                self.conversations.push(Conversation { id: self.conv_counter, title: "HUD Chat".into(), messages: vec![] });
-                self.conversations.len() - 1
-            }
-        } else {
-            self.conv_counter += 1;
-            self.conversations.push(Conversation { id: self.conv_counter, title: "HUD Chat".into(), messages: vec![] });
-            self.selected_conv = Some(self.conversations.len() - 1);
-            self.conversations.len() - 1
-        };
-        self.selected_conv = Some(idx);
-
-        self.conversations[idx].messages.push(Message { sender: "user".into(), text: text.clone(), is_user: true });
-        self.state = State::Thinking;
-        self.current_emotion = EmotionalState::curious();
-        self.conv_thinking = Some(Instant::now());
     }
 
     fn send_conv_message(&mut self) {
@@ -1113,15 +1085,12 @@ impl App {
                 if btn(ui, RichText::new("🎤").size(14.0).color(mic_color))
                     .on_hover_text(if has_stt { "Voice input (whisper)" } else { "STT not available" })
                     .clicked() {
-                    if self.stt.is_some() {
+                    if let Some(_stt) = self.stt.clone() {
                         let result_arc = self.stt_result.clone();
-                        let dummy_audio = vec![0u8; 1024];
-                        let stt_client = SttClient::new_local();
                         tokio::spawn(async move {
-                            if let Ok(text) = stt_client.transcribe(&dummy_audio).await {
-                                if let Ok(mut guard) = result_arc.lock() {
-                                    *guard = Some(text);
-                                }
+                            // STT ready — poll for real audio in future iteration
+                            if let Ok(mut guard) = result_arc.lock() {
+                                *guard = Some("STT ready — speak now".into());
                             }
                         });
                     }

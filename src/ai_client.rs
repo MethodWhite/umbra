@@ -113,6 +113,7 @@ impl OllamaClient {
 
 // ── STT client (whisper.cpp / OpenAI Whisper) ───────────────────────────────
 
+#[derive(Clone)]
 pub struct SttClient {
     base_url: String,
     api_key: Option<String>,
@@ -350,5 +351,37 @@ mod tests {
             assert_eq!(q.symbol, *sym);
             assert!(q.bid > 0.0);
         }
+    }
+
+    #[tokio::test]
+    async fn test_ollama_client_with_url() {
+        let client = OllamaClient::with_url("http://ollama:11434/");
+        assert_eq!(client.base_url, "http://ollama:11434");
+    }
+
+    #[tokio::test]
+    async fn test_market_data_quote_simulated_async() {
+        let client = MarketDataClient::new_simulated();
+        let quote = client.quote("EURUSD").await.unwrap();
+        assert_eq!(quote.symbol, "EURUSD");
+        assert!(quote.bid > 0.0);
+        assert!(quote.ask > quote.bid);
+        assert!(quote.spread > 0.0);
+        assert!(quote.timestamp > 0);
+    }
+
+    #[tokio::test]
+    async fn test_market_data_quote_spread_invariant() {
+        let client = MarketDataClient::new_simulated();
+        let q = client.quote("BTCUSD").await.unwrap();
+        assert_eq!(q.symbol, "BTCUSD");
+        assert!((q.ask - q.bid - q.spread).abs() < 1e-10);
+    }
+
+    #[tokio::test]
+    async fn test_ollama_client_check_available_fails_gracefully() {
+        let client = OllamaClient::with_url("http://127.0.0.1:1");
+        let result = client.check_available().await;
+        assert!(result.is_err());
     }
 }

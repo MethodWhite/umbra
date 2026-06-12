@@ -1,4 +1,5 @@
 // Zone 0 — Config/Init
+use dirs;
 use serde::Deserialize;
 use std::path::PathBuf;
 
@@ -97,7 +98,7 @@ impl Default for UmbraConfig {
                 jepa_epochs: 50,
             },
             security: SecurityConfig {
-                auth_dir: PathBuf::from("~/.umbra"),
+                auth_dir: dirs::home_dir().map(|p| p.join(".umbra")).unwrap_or_else(|| PathBuf::from(".umbra")),
                 env_file_perms: "0600".into(),
             },
         }
@@ -123,5 +124,22 @@ mod tests {
         let cfg = UmbraConfig::default();
         assert_eq!(cfg.api.frontend_port, 8340);
         assert_eq!(cfg.api.backend_port, 8484);
+    }
+
+    #[test]
+    fn test_config_path_uses_home() {
+        let path = UmbraConfig::config_path();
+        let home = std::env::var("HOME").unwrap_or_else(|_| "/tmp".into());
+        let expected = std::path::PathBuf::from(&home).join(".umbra/config.toml");
+        assert_eq!(path, expected);
+    }
+
+    #[test]
+    fn test_config_path_expands_home() {
+        let path = UmbraConfig::config_path();
+        let path_str = path.to_string_lossy();
+        assert!(path_str.ends_with(".umbra/config.toml"));
+        assert!(!path_str.starts_with("~/"));
+        assert!(!path_str.starts_with('~'));
     }
 }
