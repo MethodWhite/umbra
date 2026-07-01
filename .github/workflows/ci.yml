@@ -17,7 +17,7 @@ jobs:
     - name: Install Rust toolchain
       run: rustup update stable && rustup default stable
     - name: Cache Cargo dependencies
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cargo/registry
@@ -38,7 +38,7 @@ jobs:
     - name: Install Rust toolchain
       run: rustup update stable && rustup default stable
     - name: Cache Cargo dependencies
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cargo/registry
@@ -61,7 +61,7 @@ jobs:
     - name: Install Rust toolchain
       run: rustup update stable && rustup default stable
     - name: Cache Cargo dependencies
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cargo/registry
@@ -82,7 +82,7 @@ jobs:
     - name: Install Rust toolchain
       run: rustup update stable && rustup default stable
     - name: Cache Cargo dependencies
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cargo/registry
